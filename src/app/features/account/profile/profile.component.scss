@@ -1,0 +1,204 @@
+@use '../../../../styles' as styles;
+
+.profile-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.profile-header {
+  margin-bottom: 2rem;
+  
+  h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+  
+  p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+  }
+}
+
+.profile-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.profile-card {
+  background-color: var(--card-background);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+}
+
+.profile-form {
+  .form-group {
+    margin-bottom: 1.5rem;
+    
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    
+    input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background-color: var(--input-background);
+      color: var(--text-primary);
+      font-size: 1rem;
+      transition: border-color 0.3s;
+      
+      &:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+      
+      &:disabled {
+        background-color: var(--disabled-background);
+        cursor: not-allowed;
+      }
+      
+      &.is-invalid {
+        border-color: var(--error-color);
+      }
+    }
+    
+    .field-note {
+      display: block;
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+  }
+  
+  .validation-error {
+    margin-top: 0.5rem;
+    color: var(--error-color);
+    font-size: 0.85rem;
+    
+    span {
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+  }
+  
+  .btn-submit {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 1rem;
+    
+    &:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    &:disabled {
+      background-color: var(--disabled-color);
+      cursor: not-allowed;
+    }
+  }
+  
+  .spinner {
+    display: inline-block;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+}
+
+.success-message {
+  padding: 1rem;
+  background-color: var(--success-background);
+  color: var(--success-color);
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+}
+
+.error-message {
+  padding: 1rem;
+  background-color: var(--error-background);
+  color: var(--error-color);
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+}
+
+.security-options {
+  .security-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    .option-info {
+      h3 {
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+      }
+      
+      p {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+      }
+    }
+    
+    .btn-action {
+      padding: 0.5rem 1rem;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      
+      &:hover {
+        background-color: var(--primary-dark);
+      }
+    }
+  }
+}

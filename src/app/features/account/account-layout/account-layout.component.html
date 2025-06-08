@@ -1,0 +1,31 @@
+<div class="account-container">
+  <div class="account-sidebar">
+    <div class="sidebar-header">
+      <h2>My Account</h2>
+    </div>
+    <nav class="sidebar-nav">
+      <ul>
+        <li *ngFor="let link of navLinks">
+          <a 
+            [routerLink]="link.path" 
+            routerLinkActive="active" 
+            [routerLinkActiveOptions]="{exact: link.path === '/account/profile'}"
+          >
+            <span class="nav-icon material-icons">{{ link.icon }}</span>
+            <span class="nav-label">{{ link.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <div class="sidebar-footer">
+      <a routerLink="/" class="back-to-shop">
+        <span class="material-icons">arrow_back</span>
+        <span>Back to Shop</span>
+      </a>
+    </div>
+  </div>
+  
+  <div class="account-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

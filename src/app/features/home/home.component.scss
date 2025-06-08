@@ -1,0 +1,312 @@
+// Home Component Styles
+
+.home-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+// Hero Section
+.hero {
+  position: relative;
+  height: 500px;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/assets/images/hero-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  margin-bottom: 3rem;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  
+  .hero-content {
+    padding: 2rem;
+    max-width: 800px;
+    
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+    
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        
+        &.btn-primary {
+          background-color: #4a6cf7;
+          color: white;
+          border: none;
+          
+          &:hover {
+            background-color: #3a5bd9; /* Replaced darken(#4a6cf7, 10%) */
+          }
+        }
+        
+        &.btn-secondary {
+          background-color: transparent;
+          color: white;
+          border: 2px solid white;
+          
+          &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+          }
+        }
+      }
+    }
+  }
+}
+
+// Section Styles
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  
+  h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .view-all {
+    color: #4a6cf7;
+    font-weight: 500;
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// Products Grid
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+// Categories Grid
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  
+  .category-item {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-5px);
+    }
+    
+    a {
+      text-decoration: none;
+      color: #333;
+    }
+    
+    .category-image {
+      height: 150px;
+      overflow: hidden;
+      
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+    }
+    
+    &:hover .category-image img {
+      transform: scale(1.05);
+    }
+    
+    h3 {
+      padding: 1rem;
+      text-align: center;
+      font-weight: 500;
+      margin: 0;
+      background-color: white;
+    }
+  }
+}
+
+// Promotional Banner
+.promo-banner {
+  background: linear-gradient(to right, #4a6cf7, #6a8ff9);
+  border-radius: 8px;
+  padding: 2rem;
+  margin-bottom: 3rem;
+  color: white;
+  text-align: center;
+  
+  .promo-content {
+    max-width: 600px;
+    margin: 0 auto;
+    
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background-color: white;
+      color: #4a6cf7;
+      border-radius: 4px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.9);
+        transform: translateY(-2px);
+      }
+    }
+  }
+}
+
+// Loading Spinner
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: #4a6cf7;
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 1rem;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+}
+
+// Error Message
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  background-color: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  
+  p {
+    color: #e53e3e;
+    margin-bottom: 1rem;
+  }
+  
+  .btn-retry {
+    background-color: #e53e3e;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    
+    &:hover {
+      background-color: #c53030; /* Replaced darken(#e53e3e, 10%) */
+    }
+  }
+}
+
+// No Products Message
+.no-products {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f7fafc;
+  border-radius: 8px;
+  grid-column: 1 / -1;
+  
+  p {
+    color: #718096;
+  }
+}
+
+// Responsive Styles
+@media (max-width: 768px) {
+  .hero {
+    height: 400px;
+    
+    .hero-content {
+      h1 {
+        font-size: 2rem;
+      }
+      
+      p {
+        font-size: 1rem;
+      }
+    }
+  }
+  
+  .products-grid,
+  .categories-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    height: 350px;
+    
+    .hero-content {
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .hero-buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+  }
+  
+  .products-grid,
+  .categories-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}

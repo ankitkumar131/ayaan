@@ -2,33 +2,36 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Category } from '../interfaces/category.interface';
+import { Category } from '../../shared/models/category.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CategoryService {
-  private readonly API_URL = `${environment.apiUrl}/categories`;
+  private apiUrl = `${environment.apiUrl}/categories`;
+  private adminApiUrl = `${environment.apiUrl}/admin/categories`;
 
   constructor(private http: HttpClient) {}
 
-  getCategories(): Observable<Category[]> {
-    return this.http.get<Category[]>(this.API_URL);
+  // Public methods
+  getAllCategories(): Observable<Category[]> {
+    return this.http.get<Category[]>(this.apiUrl);
   }
 
-  getCategory(id: string): Observable<Category> {
-    return this.http.get<Category>(`${this.API_URL}/${id}`);
+  getCategoryById(id: string): Observable<Category> {
+    return this.http.get<Category>(`${this.apiUrl}/${id}`);
   }
 
-  createCategory(category: Partial<Category>): Observable<Category> {
-    return this.http.post<Category>(this.API_URL, category);
+  // Admin methods
+  createCategory(categoryData: FormData): Observable<Category> {
+    return this.http.post<Category>(this.adminApiUrl, categoryData);
   }
 
-  updateCategory(id: string, category: Partial<Category>): Observable<Category> {
-    return this.http.put<Category>(`${this.API_URL}/${id}`, category);
+  updateCategory(id: string, categoryData: FormData): Observable<Category> {
+    return this.http.put<Category>(`${this.adminApiUrl}/${id}`, categoryData);
   }
 
-  deleteCategory(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.API_URL}/${id}`);
+  deleteCategory(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.adminApiUrl}/${id}`);
   }
 }

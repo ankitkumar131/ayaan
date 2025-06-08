@@ -1,0 +1,123 @@
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Welcome to Our E-Commerce Store</h1>
+      <p>Discover amazing products at great prices</p>
+      <div class="hero-buttons">
+        <a routerLink="/products" class="btn btn-primary">Shop Now</a>
+        <a routerLink="/products/new-arrivals" class="btn btn-secondary">New Arrivals</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Products Section -->
+  <section class="featured-products">
+    <div class="section-header">
+      <h2>Featured Products</h2>
+      <a routerLink="/products/featured" class="view-all">View All</a>
+    </div>
+    
+    <div *ngIf="isLoading" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Loading featured products...</p>
+    </div>
+    
+    <div *ngIf="error" class="error-message">
+      <p>{{ error }}</p>
+      <button (click)="loadFeaturedProducts()" class="btn btn-retry">Retry</button>
+    </div>
+    
+    <div *ngIf="!isLoading && !error" class="products-grid">
+      <div *ngFor="let product of featuredProducts" class="product-item">
+        <app-product-card [product]="product"></app-product-card>
+      </div>
+      
+      <div *ngIf="featuredProducts.length === 0" class="no-products">
+        <p>No featured products available at the moment.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- New Arrivals Section -->
+  <section class="new-arrivals">
+    <div class="section-header">
+      <h2>New Arrivals</h2>
+      <a routerLink="/products/new-arrivals" class="view-all">View All</a>
+    </div>
+    
+    <div *ngIf="isLoading" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Loading new arrivals...</p>
+    </div>
+    
+    <div *ngIf="error" class="error-message">
+      <p>{{ error }}</p>
+      <button (click)="loadNewArrivals()" class="btn btn-retry">Retry</button>
+    </div>
+    
+    <div *ngIf="!isLoading && !error" class="products-grid">
+      <div *ngFor="let product of newArrivals" class="product-item">
+        <app-product-card [product]="product"></app-product-card>
+      </div>
+      
+      <div *ngIf="newArrivals.length === 0" class="no-products">
+        <p>No new arrivals available at the moment.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="categories">
+    <div class="section-header">
+      <h2>Shop by Category</h2>
+    </div>
+    
+    <div class="categories-grid">
+      <div class="category-item">
+        <a routerLink="/products" [queryParams]="{category: 'electronics'}">
+          <div class="category-image">
+            <img src="assets/images/categories/electronics.jpg" alt="Electronics">
+          </div>
+          <h3>Electronics</h3>
+        </a>
+      </div>
+      
+      <div class="category-item">
+        <a routerLink="/products" [queryParams]="{category: 'clothing'}">
+          <div class="category-image">
+            <img src="assets/images/categories/clothing.jpg" alt="Clothing">
+          </div>
+          <h3>Clothing</h3>
+        </a>
+      </div>
+      
+      <div class="category-item">
+        <a routerLink="/products" [queryParams]="{category: 'home-decor'}">
+          <div class="category-image">
+            <img src="assets/images/categories/home-decor.jpg" alt="Home Decor">
+          </div>
+          <h3>Home Decor</h3>
+        </a>
+      </div>
+      
+      <div class="category-item">
+        <a routerLink="/products" [queryParams]="{category: 'accessories'}">
+          <div class="category-image">
+            <img src="assets/images/categories/accessories.jpg" alt="Accessories">
+          </div>
+          <h3>Accessories</h3>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Promotional Banner -->
+  <section class="promo-banner">
+    <div class="promo-content">
+      <h2>Special Offer</h2>
+      <p>Get 20% off on all products with code: SUMMER20</p>
+      <a routerLink="/products" class="btn btn-primary">Shop Now</a>
+    </div>
+  </section>
+</div>

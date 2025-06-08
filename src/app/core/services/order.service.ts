@@ -1,58 +1,82 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Order } from '../interfaces/order.interface';
-
-export interface CreateOrderRequest {
-  items: Array<{
-    productId: string;
-    quantity: number;
-  }>;
-  shippingAddress: {
-    fullName: string;
-    addressLine1: string;
-    addressLine2?: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    country: string;
-  };
-  paymentDetails: {
-    cardNumber: string;
-    expiryDate: string;
-    cvv: string;
-  };
-}
+import { environment } from '../../../environments/environment';
+import { Order, OrderRequest } from '../../shared/models/order.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
-  private readonly API_URL = 'http://localhost:3000/api/orders';
+  private apiUrl = `${environment.apiUrl}/orders`;
+  private adminApiUrl = `${environment.apiUrl}/admin/orders`;
 
   constructor(private http: HttpClient) {}
 
-  createOrder(data: CreateOrderRequest): Observable<{ orderId: string }> {
-    return this.http.post<{ orderId: string }>(this.API_URL, data);
+  // User methods
+  placeOrder(orderData: OrderRequest): Observable<Order> {
+    return this.http.post<Order>(this.apiUrl, orderData);
   }
 
-  getOrderById(id: string): Observable<Order> {
-    return this.http.get<Order>(`${this.API_URL}/${id}`);
+  getUserOrders(params?: { page?: number; limit?: number }): Observable<{ orders: Order[]; totalCount: number; totalPages: number }> {
+    let httpParams = new HttpParams();
+
+    if (params) {
+      if (params.page) httpParams = httpParams.set('page', params.page.toString());
+      if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
+    }
+
+    return this.http.get<{ orders: Order[]; totalCount: number; totalPages: number }>(this.apiUrl, { params: httpParams });
   }
 
-  getUserOrders(): Observable<Order[]> {
-    return this.http.get<Order[]>(`${this.API_URL}/user`);
+  getOrderById(orderId: string): Observable<Order> {
+    return this.http.get<Order>(`${this.apiUrl}/${orderId}`);
   }
 
-  getAllOrders(): Observable<Order[]> {
-    return this.http.get<Order[]>(`${this.API_URL}/admin`);
+  requestRefund(orderId: string, data: { reason: string; items: { productId: string; quantity: number }[] }): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${orderId}/refund-request`, data);
   }
 
-  updateOrderStatus(orderId: string, status: Order['status']): Observable<Order> {
-    return this.http.patch<Order>(`${this.API_URL}/${orderId}/status`, { status });
+  requestReplacement(orderId: string, data: { reason: string; items: { productId: string; quantity: number }[] }): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${orderId}/replacement-request`, data);
   }
 
-  cancelOrder(id: string): Observable<Order> {
-    return this.http.post<Order>(`${this.API_URL}/${id}/cancel`, {});
+  getRequestStatus(requestId: string): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/requests/${requestId}`);
   }
-} 
+
+  // Admin methods
+  getAllOrders(params?: { 
+    page?: number; 
+    limit?: number;
+    status?: string;
+    startDate?: string;
+    endDate?: string;
+    search?: string;
+  }): Observable<{ orders: Order[]; totalCount: number; totalPages: number }> {
+    let httpParams = new HttpParams();
+
+    if (params) {
+      if (params.page) httpParams = httpParams.set('page', params.page.toString());
+      if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
+      if (params.status) httpParams = httpParams.set('status', params.status);
+      if (params.startDate) httpParams = httpParams.set('startDate', params.startDate);
+      if (params.endDate) httpParams = httpParams.set('endDate', params.endDate);
+      if (params.search) httpParams = httpParams.set('search', params.search);
+    }
+
+    return this.http.get<{ orders: Order[]; totalCount: number; totalPages: number }>(this.adminApiUrl, { params: httpParams });
+  }
+
+  updateOrderStatus(orderId: string, status: string): Observable<Order> {
+    return this.http.patch<Order>(`${this.adminApiUrl}/${orderId}/status`, { status });
+  }
+
+  processRefundRequest(requestId: string, approved: boolean, note?: string): Observable<any> {
+    return this.http.patch<any>(`${environment.apiUrl}/admin/requests/refund/${requestId}`, { approved, note });
+  }
+
+  processReplacementRequest(requestId: string, approved: boolean, note?: string): Observable<any> {
+    return this.http.patch<any>(`${environment.apiUrl}/admin/requests/replacement/${requestId}`, { approved, note });
+  }
+}

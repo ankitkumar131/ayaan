@@ -1,107 +1,67 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { 
-  Product, 
-  ProductsResponse, 
-  ProductFilters, 
-  CreateProductRequest 
-} from '../interfaces/product.interface';
-
-interface ColorData {
-  name: string;
-  code: string;
-}
+import { environment } from '../../../environments/environment';
+import { Product } from '../../shared/models/product.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
-  private readonly API_URL = 'http://localhost:3000/api/products';
+  private apiUrl = `${environment.apiUrl}/products`;
 
   constructor(private http: HttpClient) {}
 
-  getProducts(filters?: ProductFilters): Observable<ProductsResponse> {
-    let params = new HttpParams();
-    
-    if (filters) {
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          params = params.set(key, value.toString());
-        }
-      });
+  getProducts(params?: {
+    page?: number;
+    limit?: number;
+    category?: string;
+    search?: string;
+    sort?: string;
+    minPrice?: number;
+    maxPrice?: number;
+  }): Observable<{ products: Product[]; totalCount: number; totalPages: number }> {
+    let httpParams = new HttpParams();
+
+    if (params) {
+      if (params.page) httpParams = httpParams.set('page', params.page.toString());
+      if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
+      if (params.category) httpParams = httpParams.set('category', params.category);
+      if (params.search) httpParams = httpParams.set('search', params.search);
+      if (params.sort) httpParams = httpParams.set('sort', params.sort);
+      if (params.minPrice) httpParams = httpParams.set('minPrice', params.minPrice.toString());
+      if (params.maxPrice) httpParams = httpParams.set('maxPrice', params.maxPrice.toString());
     }
 
-    return this.http.get<ProductsResponse>(this.API_URL, { params });
+    return this.http.get<{ products: Product[]; totalCount: number; totalPages: number }>(this.apiUrl, { params: httpParams });
   }
 
-  getProduct(id: string): Observable<Product> {
-    return this.http.get<Product>(`${this.API_URL}/${id}`);
+  getProductById(id: string): Observable<Product> {
+    return this.http.get<Product>(`${this.apiUrl}/${id}`);
   }
 
-  createProduct(data: CreateProductRequest | FormData): Observable<Product> {
-    if (!(data instanceof FormData)) {
-      const formData = new FormData();
-      
-      Object.entries(data).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          if (key === 'images' && Array.isArray(value)) {
-            (value as File[]).forEach((file: File) => {
-              formData.append('images', file);
-            });
-          } else if (key === 'colors' && Array.isArray(value)) {
-            (value as ColorData[]).forEach((color, index) => {
-              formData.append(`colors[${index}][name]`, color.name);
-              formData.append(`colors[${index}][code]`, color.code);
-            });
-          } else if (key === 'sizes' && Array.isArray(value)) {
-            (value as string[]).forEach(size => {
-              formData.append('sizes[]', size);
-            });
-          } else {
-            formData.append(key, value.toString());
-          }
-        }
-      });
-      
-      return this.http.post<Product>(this.API_URL, formData);
-    }
-    
-    return this.http.post<Product>(this.API_URL, data);
+  getFeaturedProducts(): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.apiUrl}/featured`);
   }
 
-  updateProduct(id: string, data: Partial<CreateProductRequest> | FormData): Observable<Product> {
-    if (!(data instanceof FormData)) {
-      const formData = new FormData();
-      
-      Object.entries(data).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          if (key === 'images' && Array.isArray(value)) {
-            (value as File[]).forEach((file: File) => {
-              formData.append('images', file);
-            });
-          } else if (key === 'colors' && Array.isArray(value)) {
-            (value as ColorData[]).forEach((color, index) => {
-              formData.append(`colors[${index}][name]`, color.name);
-              formData.append(`colors[${index}][code]`, color.code);
-            });
-          } else if (key === 'sizes' && Array.isArray(value)) {
-            (value as string[]).forEach(size => {
-              formData.append('sizes[]', size);
-            });
-          } else {
-            formData.append(key, value.toString());
-          }
-        }
-      });
-      
-      return this.http.put<Product>(`${this.API_URL}/${id}`, formData);
-    }
-    
-    return this.http.put<Product>(`${this.API_URL}/${id}`, data);
+  getNewArrivals(): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.apiUrl}/new-arrivals`);
   }
 
-  deleteProduct(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.API_URL}/${id}`);
+  getRelatedProducts(productId: string): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.apiUrl}/${productId}/related`);
+  }
+
+  // Admin methods
+  createProduct(productData: FormData): Observable<Product> {
+    return this.http.post<Product>(`${environment.apiUrl}/admin/products`, productData);
+  }
+
+  updateProduct(id: string, productData: FormData): Observable<Product> {
+    return this.http.put<Product>(`${environment.apiUrl}/admin/products/${id}`, productData);
+  }
+
+  deleteProduct(id: string): Observable<any> {
+    return this.http.delete<any>(`${environment.apiUrl}/admin/products/${id}`);
   }
 }

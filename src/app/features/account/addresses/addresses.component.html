@@ -1,0 +1,130 @@
+<div class="addresses-container">
+  <div class="addresses-header">
+    <h1>My Addresses</h1>
+    <p>Manage your shipping addresses</p>
+  </div>
+  
+  <div class="addresses-content">
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+    
+    <!-- Success Message -->
+    <div *ngIf="successMessage" class="success-message">
+      {{ successMessage }}
+    </div>
+    
+    <!-- Address Display Mode -->
+    <div *ngIf="!isEditing && user?.address" class="address-display">
+      <div class="address-card">
+        <div class="address-details">
+          <p><strong>{{ user?.name }}</strong></p>
+          <p>{{ user?.address?.street }}</p>
+          <p>{{ user?.address?.city }}, {{ user?.address?.state }} {{ user?.address?.zipCode }}</p>
+          <p>{{ user?.address?.country }}</p>
+        </div>
+        <div class="address-actions">
+          <button (click)="startEditing()" class="btn-edit">Edit</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- No Address State -->
+    <div *ngIf="!isEditing && !user?.address" class="no-address">
+      <div class="empty-icon">🏠</div>
+      <h2>No Address Found</h2>
+      <p>You haven't added a shipping address yet.</p>
+      <button (click)="startEditing()" class="btn-add">Add Address</button>
+    </div>
+    
+    <!-- Address Form -->
+    <div *ngIf="isEditing" class="address-form-container">
+      <h2>{{ user?.address ? 'Edit Address' : 'Add New Address' }}</h2>
+      
+      <form [formGroup]="addressForm" (ngSubmit)="onSubmit()" class="address-form">
+        <div class="form-group">
+          <label for="street">Street Address</label>
+          <input 
+            type="text" 
+            id="street" 
+            formControlName="street" 
+            [class.invalid]="addressForm.get('street')?.invalid && addressForm.get('street')?.touched"
+          >
+          <div *ngIf="addressForm.get('street')?.invalid && addressForm.get('street')?.touched" class="error-text">
+            Street address is required
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="city">City</label>
+            <input 
+              type="text" 
+              id="city" 
+              formControlName="city" 
+              [class.invalid]="addressForm.get('city')?.invalid && addressForm.get('city')?.touched"
+            >
+            <div *ngIf="addressForm.get('city')?.invalid && addressForm.get('city')?.touched" class="error-text">
+              City is required
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="state">State/Province</label>
+            <input 
+              type="text" 
+              id="state" 
+              formControlName="state" 
+              [class.invalid]="addressForm.get('state')?.invalid && addressForm.get('state')?.touched"
+            >
+            <div *ngIf="addressForm.get('state')?.invalid && addressForm.get('state')?.touched" class="error-text">
+              State is required
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="zipCode">ZIP/Postal Code</label>
+            <input 
+              type="text" 
+              id="zipCode" 
+              formControlName="zipCode" 
+              [class.invalid]="addressForm.get('zipCode')?.invalid && addressForm.get('zipCode')?.touched"
+            >
+            <div *ngIf="addressForm.get('zipCode')?.invalid && addressForm.get('zipCode')?.touched" class="error-text">
+              <span *ngIf="addressForm.get('zipCode')?.errors?.['required']">ZIP code is required</span>
+              <span *ngIf="addressForm.get('zipCode')?.errors?.['pattern']">Enter a valid ZIP code</span>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="country">Country</label>
+            <input 
+              type="text" 
+              id="country" 
+              formControlName="country" 
+              [class.invalid]="addressForm.get('country')?.invalid && addressForm.get('country')?.touched"
+            >
+            <div *ngIf="addressForm.get('country')?.invalid && addressForm.get('country')?.touched" class="error-text">
+              Country is required
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" (click)="cancelEditing()" class="btn-cancel">Cancel</button>
+          <button 
+            type="submit" 
+            [disabled]="addressForm.invalid || isSubmitting" 
+            class="btn-save"
+          >
+            <span *ngIf="isSubmitting">Saving...</span>
+            <span *ngIf="!isSubmitting">Save Address</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

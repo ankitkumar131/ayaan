@@ -1,1 +1,51 @@
-<p>product-card works!</p>
+<div class="product-card">
+  <a [routerLink]="['/products', product.id]" class="product-link">
+    <!-- Product Image -->
+    <div class="product-image">
+      <img [src]="product.images && product.images.length > 0 ? product.images[0] : 'assets/images/placeholder.jpg'" 
+           [alt]="product.name" 
+           loading="lazy">
+      
+      <!-- Discount Badge -->
+      <div *ngIf="getDiscountPercentage() > 0" class="discount-badge">
+        -{{ getDiscountPercentage() }}%
+      </div>
+      
+      <!-- New Arrival Badge -->
+      <div *ngIf="product.isNewArrival" class="new-badge">
+        New
+      </div>
+    </div>
+    
+    <!-- Product Info -->
+    <div class="product-info">
+      <h3 class="product-name">{{ product.name }}</h3>
+      
+      <div class="product-category" *ngIf="product.category">
+        {{ product.category.name }}
+      </div>
+      
+      <div class="product-price">
+        <span *ngIf="product.discountPrice" class="original-price">${{ product.price.toFixed(2) }}</span>
+        <span class="current-price">${{ (product.discountPrice || product.price).toFixed(2) }}</span>
+      </div>
+      
+      <!-- Rating -->
+      <div *ngIf="product.rating !== undefined" class="product-rating">
+        <div class="stars">
+          <span *ngFor="let star of [1, 2, 3, 4, 5]" class="star" [class.filled]="star <= product.rating">
+            ★
+          </span>
+        </div>
+        <span class="rating-count" *ngIf="product.reviewCount !== undefined">({{ product.reviewCount }})</span>
+      </div>
+    </div>
+  </a>
+  
+  <!-- Add to Cart Button -->
+  <button class="add-to-cart-btn" (click)="addToCart($event)" [disabled]="isAddingToCart || product.stock <= 0">
+    <span *ngIf="!isAddingToCart && product.stock > 0">Add to Cart</span>
+    <span *ngIf="isAddingToCart">Adding...</span>
+    <span *ngIf="product.stock <= 0">Out of Stock</span>
+  </button>
+</div>

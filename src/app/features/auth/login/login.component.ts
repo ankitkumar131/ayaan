@@ -1,68 +1,70 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink, Router, ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
-import { Router } from '@angular/router';
+import { PasswordToggleComponent } from '../../../shared/components/password-toggle/password-toggle.component';
+import { CartService } from '../../../core/services/cart.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, PasswordToggleComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
   loginForm: FormGroup;
-  isLoading = false;
-  errorMessage = '';
+  isSubmitting = false;
+  errorMessage: string | null = null;
+  showPassword = false;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private cartService: CartService,
     private router: Router
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      rememberMe: [false]
     });
   }
 
-  ngOnInit(): void {
-    // Add any initialization logic here
-  }
-
   onSubmit(): void {
-    if (this.loginForm.invalid) return;
+    if (this.loginForm.invalid || this.isSubmitting) {
+      return;
+    }
 
-    this.isLoading = true;
-    this.errorMessage = '';
+    this.isSubmitting = true;
+    this.errorMessage = null;
 
-    this.authService.login(this.loginForm.value).subscribe({
+    const { email, password } = this.loginForm.value;
+
+    this.authService.login(email, password).subscribe({
       next: () => {
-        this.router.navigate(['/']);
+        // Sync guest cart with user cart after login
+        this.cartService.syncCart().subscribe();
+        
+        // Navigate to the redirect URL or home page
+        const redirectUrl = this.authService.redirectUrl || '/';
+        this.authService.redirectUrl = null;
+        this.router.navigateByUrl(redirectUrl);
       },
       error: (error) => {
-        this.errorMessage = error.message || 'Failed to sign in';
-        this.isLoading = false;
+        this.isSubmitting = false;
+        if (error.status === 401) {
+          this.errorMessage = 'Invalid email or password';
+        } else {
+          this.errorMessage = 'An error occurred during login. Please try again.';
+        }
+        console.error('Login error', error);
       }
     });
   }
 
-  getErrorMessage(field: string): string {
-    const control = this.loginForm.get(field);
-    if (!control?.errors || !control.touched) return '';
-
-    if (control.errors['required']) {
-      return `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
-    }
-    if (control.errors['email']) {
-      return 'Please enter a valid email address';
-    }
-    if (control.errors['minlength']) {
-      return 'Password must be at least 6 characters long';
-    }
-
-    return '';
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 }

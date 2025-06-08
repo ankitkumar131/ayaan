@@ -1,0 +1,90 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <h1>My Profile</h1>
+    <p>Manage your account information</p>
+  </div>
+  
+  <div class="profile-content">
+    <!-- Profile Form -->
+    <div class="profile-card">
+      <h2>Personal Information</h2>
+      
+      <!-- Success Message -->
+      <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
+      
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+      
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
+        <!-- Username Field -->
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input 
+            type="text" 
+            id="username" 
+            formControlName="username" 
+            [class.is-invalid]="profileForm.get('username')?.invalid && profileForm.get('username')?.touched"
+          >
+          <div *ngIf="profileForm.get('username')?.invalid && profileForm.get('username')?.touched" class="validation-error">
+            <span *ngIf="profileForm.get('username')?.errors?.['required']">Username is required</span>
+            <span *ngIf="profileForm.get('username')?.errors?.['minlength']">Username must be at least 3 characters</span>
+          </div>
+        </div>
+        
+        <!-- Email Field (Disabled) -->
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email" 
+            [disabled]="true"
+          >
+          <small class="field-note">Email cannot be changed</small>
+        </div>
+        
+        <!-- Phone Field -->
+        <div class="form-group">
+          <label for="phone">Phone Number (Optional)</label>
+          <input 
+            type="tel" 
+            id="phone" 
+            formControlName="phone" 
+            [class.is-invalid]="profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched"
+          >
+          <div *ngIf="profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched" class="validation-error">
+            <span *ngIf="profileForm.get('phone')?.errors?.['pattern']">Please enter a valid phone number</span>
+          </div>
+        </div>
+        
+        <!-- Submit Button -->
+        <button 
+          type="submit" 
+          class="btn-submit" 
+          [disabled]="profileForm.invalid || isSubmitting"
+        >
+          <span *ngIf="!isSubmitting">Save Changes</span>
+          <span *ngIf="isSubmitting" class="spinner"></span>
+        </button>
+      </form>
+    </div>
+    
+    <!-- Account Security -->
+    <div class="profile-card">
+      <h2>Account Security</h2>
+      <div class="security-options">
+        <div class="security-option">
+          <div class="option-info">
+            <h3>Password</h3>
+            <p>Change your account password</p>
+          </div>
+          <a routerLink="/account/change-password" class="btn-action">Change Password</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

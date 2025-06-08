@@ -1,0 +1,34 @@
+<div class="orders-container">
+  <div class="orders-header">
+    <h1>My Orders</h1>
+    <p>View and track your orders</p>
+  </div>
+  
+  <div class="orders-content">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading your orders...</p>
+    </div>
+    
+    <!-- Error State -->
+    <div *ngIf="errorMessage && !isLoading" class="error-message">
+      {{ errorMessage }}
+    </div>
+    
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && !errorMessage && orders.length === 0" class="empty-state">
+      <div class="empty-icon">📦</div>
+      <h2>No Orders Yet</h2>
+      <p>You haven't placed any orders yet.</p>
+      <a routerLink="/products" class="btn-shop">Start Shopping</a>
+    </div>
+    
+    <!-- Orders List -->
+    <div *ngIf="!isLoading && !errorMessage && orders.length > 0" class="orders-list">
+      <div *ngFor="let order of orders" class="order-card">
+        <!-- Order details would go here -->
+      </div>
+    </div>
+  </div>
+</div>

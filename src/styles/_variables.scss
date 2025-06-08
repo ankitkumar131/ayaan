@@ -1,0 +1,42 @@
+// Variables
+
+// Colors
+$primary-color: #4a6cf7;
+$primary-dark: #3a5bd9; // Replaces darken(#4a6cf7, 10%)
+$error-color: #e53e3e;
+$error-dark: #c53030; // Replaces darken(#e53e3e, 10%)
+$text-primary: #1f2937;
+$text-secondary: #4b5563;
+$border-color: #e5e7eb;
+$background-color: #f9fafb;
+$card-background: #ffffff;
+$sidebar-background: #f9fafb;
+$input-background: #ffffff;
+$disabled-color: #a0aec0;
+$success-color: #10b981;
+$success-background: #d1fae5;
+$error-background: #fee2e2;
+
+// Sizes
+$header-height: 70px;
+$footer-height: 60px;
+
+:root {
+  --primary-color: #{$primary-color};
+  --primary-dark: #{$primary-dark};
+  --error-color: #{$error-color};
+  --error-dark: #{$error-dark};
+  --text-primary: #{$text-primary};
+  --text-secondary: #{$text-secondary};
+  --border-color: #{$border-color};
+  --background-color: #{$background-color};
+  --card-background: #{$card-background};
+  --sidebar-background: #{$sidebar-background};
+  --input-background: #{$input-background};
+  --disabled-color: #{$disabled-color};
+  --success-color: #{$success-color};
+  --success-background: #{$success-background};
+  --error-background: #{$error-background};
+  --header-height: #{$header-height};
+  --footer-height: #{$footer-height};
+}

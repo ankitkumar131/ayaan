@@ -1,92 +1,120 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap, map } from 'rxjs';
-import { 
-  RegisterRequest, 
-  LoginRequest, 
-  AuthResponse, 
-  UserProfile, 
-  UpdateProfileRequest 
-} from '../interfaces/auth.interface';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
+import { User } from '../../shared/models/user.model';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly API_URL = 'http://localhost:3000/api';
-  private currentUserSubject = new BehaviorSubject<UserProfile | null>(null);
-  currentUser$ = this.currentUserSubject.asObservable();
-  isAuthenticated$ = this.currentUser$.pipe(map(user => !!user));
-  isAdmin$ = this.currentUser$.pipe(map(user => user?.role === 'admin'));
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  public currentUser$ = this.currentUserSubject.asObservable();
+  public redirectUrl: string | null = null;
+  private tokenKey = 'auth_token';
+  private userKey = 'user_data';
 
-  constructor(private http: HttpClient) {
-    this.loadUser();
+  constructor(private http: HttpClient, private router: Router) {
+    this.loadUserFromStorage();
   }
 
-  private loadUser(): void {
-    const token = localStorage.getItem('token');
-    if (token) {
-      this.getProfile().subscribe();
+  private loadUserFromStorage(): void {
+    const token = localStorage.getItem(this.tokenKey);
+    const userData = localStorage.getItem(this.userKey);
+    
+    if (token && userData) {
+      try {
+        const user = JSON.parse(userData) as User;
+        this.currentUserSubject.next(user);
+      } catch (error) {
+        console.error('Error parsing user data from localStorage', error);
+        this.logout();
+      }
     }
   }
 
-  register(data: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.API_URL}/auth/register`, data)
+  register(userData: any): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/auth/register`, userData)
       .pipe(
-        tap(response => {
-          localStorage.setItem('token', response.token);
-          this.getProfile().subscribe();
+        catchError(error => {
+          return throwError(() => error);
         })
       );
   }
 
-  login(data: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.API_URL}/auth/login`, data)
+  login(email: string, password: string): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/auth/login`, { email, password })
       .pipe(
         tap(response => {
-          localStorage.setItem('token', response.token);
-          this.getProfile().subscribe();
+          this.setSession(response);
+        }),
+        catchError(error => {
+          return throwError(() => error);
         })
       );
+  }
+
+  adminLogin(email: string, password: string): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/auth/admin/login`, { email, password })
+      .pipe(
+        tap(response => {
+          this.setSession(response);
+        }),
+        catchError(error => {
+          return throwError(() => error);
+        })
+      );
+  }
+
+  private setSession(authResult: any): void {
+    if (authResult.token && authResult.user) {
+      localStorage.setItem(this.tokenKey, authResult.token);
+      localStorage.setItem(this.userKey, JSON.stringify(authResult.user));
+      this.currentUserSubject.next(authResult.user);
+    }
   }
 
   logout(): void {
-    localStorage.removeItem('token');
+    localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.userKey);
     this.currentUserSubject.next(null);
+    this.router.navigate(['/']);
   }
 
-  getProfile(): Observable<UserProfile> {
-    return this.http.get<UserProfile>(`${this.API_URL}/user/profile`)
-      .pipe(
-        tap(user => this.currentUserSubject.next(user))
-      );
+  getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
   }
 
-  updateProfile(data: UpdateProfileRequest): Observable<UserProfile> {
-    return this.http.put<UserProfile>(`${this.API_URL}/user/profile`, data)
-      .pipe(
-        tap(user => this.currentUserSubject.next(user))
-      );
-  }
-
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+  isAuthenticated(): boolean {
+    return !!this.getToken();
   }
 
   isAdmin(): boolean {
     const user = this.currentUserSubject.value;
-    return user?.role === 'admin';
+    return !!user && user.role === 'admin';
   }
 
-  getToken(): string | null {
-    return localStorage.getItem('token');
+  getCurrentUser(): User | null {
+    return this.currentUserSubject.value;
   }
 
-  isAuthenticated(): Observable<boolean> {
-    return this.isAuthenticated$;
+  requestPasswordReset(email: string): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/auth/request-password-reset`, { email })
+      .pipe(
+        catchError(error => {
+          return throwError(() => error);
+        })
+      );
   }
 
-  isNotAuthenticated(): Observable<boolean> {
-    return this.isAuthenticated$.pipe(map(isAuth => !isAuth));
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/auth/reset-password`, { token, newPassword })
+      .pipe(
+        catchError(error => {
+          return throwError(() => error);
+        })
+      );
   }
-} 
+}

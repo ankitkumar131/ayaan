@@ -1,0 +1,117 @@
+@use '../../../../styles' as styles;
+
+.account-container {
+  display: flex;
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.account-sidebar {
+  width: 280px;
+  background-color: var(--sidebar-background);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .sidebar-header {
+    padding: 2rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
+  }
+  
+  .sidebar-nav {
+    flex: 1;
+    padding: 1.5rem 0;
+    
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    li {
+      margin-bottom: 0.5rem;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    
+    a {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1.5rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: all 0.3s;
+      border-left: 3px solid transparent;
+      
+      &:hover {
+        background-color: var(--hover-background);
+      }
+      
+      &.active {
+        background-color: var(--active-background);
+        color: var(--primary-color);
+        border-left-color: var(--primary-color);
+      }
+      
+      .nav-icon {
+        margin-right: 0.75rem;
+        font-size: 1.25rem;
+      }
+      
+      .nav-label {
+        font-size: 1rem;
+        font-weight: 500;
+      }
+    }
+  }
+  
+  .sidebar-footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    
+    .back-to-shop {
+      display: flex;
+      align-items: center;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.3s;
+      
+      &:hover {
+        color: var(--primary-color);
+      }
+      
+      .material-icons {
+        font-size: 1rem;
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}
+
+.account-content {
+  flex: 1;
+  background-color: var(--background-primary);
+  
+  @media (max-width: 768px) {
+    min-height: 500px;
+  }
+}
