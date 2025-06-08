@@ -1,0 +1,96 @@
+<header class="header">
+  <div class="header-container">
+    <!-- Logo -->
+    <div class="logo">
+      <a routerLink="/" class="logo-link">
+        <span class="logo-text">FASHION</span>
+      </a>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="main-nav" [class.active]="isMobileMenuOpen">
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a routerLink="/products/category/men" routerLinkActive="active" class="nav-link">Men</a>
+          <div class="dropdown-menu">
+            <a routerLink="/products/category/men/shirts" class="dropdown-item">Shirts</a>
+            <a routerLink="/products/category/men/pants" class="dropdown-item">Pants</a>
+            <a routerLink="/products/category/men/shoes" class="dropdown-item">Shoes</a>
+            <a routerLink="/products/category/men/accessories" class="dropdown-item">Accessories</a>
+          </div>
+        </li>
+        <li class="nav-item dropdown">
+          <a routerLink="/products/category/women" routerLinkActive="active" class="nav-link">Women</a>
+          <div class="dropdown-menu">
+            <a routerLink="/products/category/women/dresses" class="dropdown-item">Dresses</a>
+            <a routerLink="/products/category/women/tops" class="dropdown-item">Tops</a>
+            <a routerLink="/products/category/women/pants" class="dropdown-item">Pants</a>
+            <a routerLink="/products/category/women/shoes" class="dropdown-item">Shoes</a>
+            <a routerLink="/products/category/women/accessories" class="dropdown-item">Accessories</a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/products/new-arrivals" routerLinkActive="active" class="nav-link">New Arrivals</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/products/featured" routerLinkActive="active" class="nav-link">Featured</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- User Actions -->
+    <div class="user-actions">
+      <!-- Search -->
+      <button class="action-btn search-btn" (click)="toggleSearch()">
+        <span class="icon">🔍</span>
+      </button>
+
+      <!-- Cart -->
+      <a routerLink="/cart" class="action-btn cart-btn">
+        <span class="icon">🛒</span>
+        <span class="badge" *ngIf="cart && cart.totalItems > 0">{{ cart.totalItems }}</span>
+      </a>
+
+      <!-- User Menu -->
+      <div class="user-menu" *ngIf="isAuthenticated; else authLinks">
+        <button class="action-btn user-btn">
+          <span class="icon">👤</span>
+        </button>
+        <div class="dropdown-menu">
+          <a routerLink="/account/profile" class="dropdown-item">My Profile</a>
+          <a routerLink="/account/orders" class="dropdown-item">My Orders</a>
+          <a routerLink="/account/addresses" class="dropdown-item">My Addresses</a>
+          <a *ngIf="isAdmin" routerLink="/admin" class="dropdown-item">Admin Dashboard</a>
+          <button (click)="logout()" class="dropdown-item">Logout</button>
+        </div>
+      </div>
+
+      <!-- Auth Links -->
+      <ng-template #authLinks>
+        <div class="auth-links">
+          <a routerLink="/auth/login" class="btn btn-outline">Login</a>
+          <a routerLink="/auth/register" class="btn btn-primary">Register</a>
+        </div>
+      </ng-template>
+
+      <!-- Mobile Menu Toggle -->
+      <button class="mobile-menu-toggle" (click)="toggleMobileMenu()">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" *ngIf="isSearchOpen">
+    <div class="search-container">
+      <input type="text" placeholder="Search for products..." class="search-input">
+      <button class="search-submit">Search</button>
+      <button class="search-close" (click)="toggleSearch()">✕</button>
+    </div>
+  </div>
+</header>
