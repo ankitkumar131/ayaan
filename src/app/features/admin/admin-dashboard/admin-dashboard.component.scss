@@ -1,0 +1,131 @@
+.admin-dashboard {
+  padding: 2rem;
+
+  h1 {
+    margin-bottom: 2rem;
+    color: #1f2937;
+    font-size: 2rem;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+
+    .stat-card {
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      h3 {
+        font-size: 1rem;
+        color: #6b7280;
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #1f2937;
+      }
+    }
+  }
+
+  .dashboard-sections {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+
+    @media (min-width: 1024px) {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    section {
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+      h2 {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        color: #1f2937;
+      }
+    }
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+
+      th, td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f9fafb;
+        font-weight: 500;
+        color: #4b5563;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      td {
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      tbody tr:hover {
+        background-color: #f9fafb;
+      }
+    }
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+
+    &.pending {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+
+    &.processing {
+      background-color: #e0f2fe;
+      color: #0369a1;
+    }
+
+    &.shipped {
+      background-color: #dcfce7;
+      color: #166534;
+    }
+
+    &.delivered {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+
+    &.cancelled {
+      background-color: #fee2e2;
+      color: #b91c1c;
+    }
+  }
+
+  .critical {
+    color: #dc2626;
+    font-weight: 600;
+  }
+}

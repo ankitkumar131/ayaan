@@ -1,1 +1,153 @@
-<p>order-management works!</p>
+
+<div class="order-management">
+    <header class="page-header">
+      <h1>Order Management</h1>
+      <div class="filters">
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          (ngModelChange)="filterOrders()"
+          placeholder="Search by order ID or customer name..."
+          class="search-input"
+        >
+        <select [(ngModel)]="selectedStatus" (ngModelChange)="filterOrders()">
+          <option value="">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="processing">Processing</option>
+          <option value="shipped">Shipped</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="refunded">Refunded</option>
+        </select>
+      </div>
+    </header>
+
+    <div class="alert error" *ngIf="error">{{ error }}</div>
+    <div class="alert success" *ngIf="successMessage">{{ successMessage }}</div>
+
+    <div class="loading" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Loading orders...</p>
+    </div>
+
+    <div class="table-responsive" *ngIf="!isLoading">
+      <table>
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of filteredOrders">
+            <td>{{ order._id }}</td>
+            <td>{{ order.createdAt | date:'medium' }}</td>
+            <td>{{ order.shippingAddress.fullName }}</td>
+            <td>{{ order.items.length }} items</td>
+            <td>${{ order.total.toFixed(2) }}</td>
+            <td>
+              <select 
+                [(ngModel)]="order.status" 
+                (change)="updateOrderStatus(order)"
+                [class]="'status-select ' + order.status"
+              >
+                <option value="pending">Pending</option>
+                <option value="processing">Processing</option>
+                <option value="shipped">Shipped</option>
+                <option value="delivered">Delivered</option>
+                <option value="cancelled">Cancelled</option>
+                <option value="refunded">Refunded</option>
+              </select>
+            </td>
+            <td class="actions">
+              <button class="view-btn" (click)="viewOrderDetails(order)">View Details</button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredOrders.length === 0">
+            <td colspan="7" class="no-data">
+              No orders found
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div class="modal" *ngIf="selectedOrder">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Order Details</h2>
+          <button class="close-btn" (click)="closeOrderDetails()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="order-info">
+            <div class="info-group">
+              <h3>Order Information</h3>
+              <p><strong>Order ID:</strong> {{ selectedOrder._id }}</p>
+              <p><strong>Date:</strong> {{ selectedOrder.createdAt | date:'medium' }}</p>
+              <p><strong>Status:</strong> <span [class]="'status-badge ' + selectedOrder.status">{{ selectedOrder.status }}</span></p>
+              <p><strong>Subtotal:</strong> ${{ selectedOrder.subtotal.toFixed(2) }}</p>
+              <p><strong>Total:</strong> ${{ selectedOrder.total.toFixed(2) }}</p>
+            </div>
+            
+            <div class="info-group">
+              <h3>Customer Information</h3>
+              <p><strong>Name:</strong> {{ selectedOrder.shippingAddress.fullName }}</p>
+              <p><strong>Address:</strong> {{ selectedOrder.shippingAddress.addressLine1 }}</p>
+              <p *ngIf="selectedOrder.shippingAddress.addressLine2">{{ selectedOrder.shippingAddress.addressLine2 }}</p>
+              <p>{{ selectedOrder.shippingAddress.city }}, {{ selectedOrder.shippingAddress.state }} {{ selectedOrder.shippingAddress.zipCode }}</p>
+              <p>{{ selectedOrder.shippingAddress.country }}</p>
+            </div>
+          </div>
+
+          <div class="order-items">
+            <h3>Order Items</h3>
+            <table class="items-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of selectedOrder.items">
+                  <td>
+                    <div class="product-info">
+                      <div class="product-image" *ngIf="item.product.images && item.product.images.length">
+                        <img [src]="item.product.images[0]" [alt]="item.product.name">
+                      </div>
+                      <div class="product-details">
+                        <p class="product-name">{{ item.product.name }}</p>
+                        <p *ngIf="item.size" class="product-variant">Size: {{ item.size }}</p>
+                        <p *ngIf="item.color" class="product-variant">
+                          Color: 
+                          <span 
+                            class="color-dot" 
+                            [style.background-color]="item.color.code"
+                          ></span>
+                          {{ item.color.name }}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td>${{ item.price.toFixed(2) }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>${{ (item.price * item.quantity).toFixed(2) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="close-btn" (click)="closeOrderDetails()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>

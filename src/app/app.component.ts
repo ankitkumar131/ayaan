@@ -8,9 +8,8 @@ import { LayoutComponent } from './features/shared/layout/layout.component';
   standalone: true,
   imports: [RouterOutlet, LayoutComponent],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
- 
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'frontend1';
+  title = 'StyleStore';
 }

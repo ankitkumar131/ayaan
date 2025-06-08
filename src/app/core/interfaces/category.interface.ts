@@ -6,6 +6,7 @@ export interface Category {
   order?: number;
   image?: string;
   children?: Category[];
+ 
 }
 
 export interface CreateCategoryRequest {

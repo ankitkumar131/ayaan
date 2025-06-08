@@ -1,1 +1,113 @@
-<p>category-management works!</p>
+<div class="category-management">
+    <header class="page-header">
+      <h1>Category Management</h1>
+      <div class="actions">
+        <button class="add-btn" (click)="showAddCategoryModal()">Add New Category</button>
+      </div>
+      <div class="filters">
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          (ngModelChange)="filterCategories()"
+          placeholder="Search categories..."
+          class="search-input"
+        >
+      </div>
+    </header>
+  
+    <div class="alert error" *ngIf="error">{{ error }}</div>
+    <div class="alert success" *ngIf="successMessage">{{ successMessage }}</div>
+  
+    <div class="loading" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Loading categories...</p>
+    </div>
+  
+    <div class="table-responsive" *ngIf="!isLoading">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Products</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let category of filteredCategories">
+            <td>{{ category.name }}</td>
+            <td>{{ category.description }}</td>
+            <td>{{ ((category as any).productCount) || 0 }}</td>
+            <td class="actions">
+              <button class="edit-btn" (click)="editCategory(category)">Edit</button>
+              <button class="delete-btn" (click)="confirmDeleteCategory(category)">Delete</button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredCategories.length === 0">
+            <td colspan="4" class="no-data">No categories found</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <!-- Add/Edit Category Modal -->
+    <div class="modal" *ngIf="showModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>{{ isEditing ? 'Edit Category' : 'Add New Category' }}</h2>
+          <button class="close-btn" (click)="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="categoryForm" (ngSubmit)="saveCategory()">
+            <div class="form-group">
+              <label for="name">Category Name</label>
+              <input type="text" id="name" formControlName="name" class="form-control">
+              <div class="error-message" *ngIf="(categoryForm.get('name')?.invalid) && (categoryForm.get('name')?.touched)">
+                Category name is required
+              </div>
+            </div>
+  
+            <div class="form-group">
+              <label for="description">Description</label>
+              <textarea id="description" formControlName="description" class="form-control" rows="4"></textarea>
+              <div class="error-message" *ngIf="(categoryForm.get('description')?.invalid) && (categoryForm.get('description')?.touched)">
+                Description is required
+              </div>
+            </div>
+  
+            <div class="form-actions">
+              <button type="button" class="cancel-btn" (click)="closeModal()">Cancel</button>
+              <button type="submit" class="save-btn" [disabled]="categoryForm.invalid || isSaving">
+                <span *ngIf="isSaving" class="spinner-small"></span>
+                {{ isSaving ? 'Saving...' : 'Save Category' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" *ngIf="showDeleteModal">
+      <div class="modal-content delete-modal">
+        <div class="modal-header">
+          <h2>Confirm Delete</h2>
+          <button class="close-btn" (click)="cancelDelete()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="warning" *ngIf="((categoryToDelete as any).productCount) && ((categoryToDelete as any).productCount > 0)">
+            Warning: This category contains {{ (categoryToDelete as any).productCount }} products. Deleting it may affect these products.
+          </p>
+          <p class="warning">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+          <button class="cancel-btn" (click)="cancelDelete()">Cancel</button>
+          <button class="delete-btn" (click)="deleteCategory()" [disabled]="isDeleting">
+            <span *ngIf="isDeleting" class="spinner-small"></span>
+            {{ isDeleting ? 'Deleting...' : 'Delete' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
