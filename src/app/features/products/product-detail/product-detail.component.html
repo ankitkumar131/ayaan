@@ -1,0 +1,84 @@
+<div class="product-detail-container" *ngIf="product">
+  <!-- Image Gallery -->
+  <div class="product-gallery">
+    <div class="main-image">
+      <img [src]="selectedImage()" [alt]="product.name">
+    </div>
+    <div class="thumbnail-list" *ngIf="product.images && product.images.length > 1">
+      <button
+        *ngFor="let image of product.images; let i = index"
+        class="thumbnail"
+        [class.active]="selectedImageIndex() === i"
+        (click)="selectImage(i)"
+      >
+        <img [src]="image" [alt]="product.name + ' thumbnail ' + (i + 1)">
+      </button>
+    </div>
+  </div>
+
+  <!-- Product Info -->
+  <div class="product-info">
+    <h1>{{ product.name }}</h1>
+    <p class="price">${{ product.price.toFixed(2) }}</p>
+    
+    <div class="stock-info" [class.low-stock]="product.stock < 10">
+      {{ product.stock > 0 ? product.stock + ' in stock' : 'Out of stock' }}
+    </div>
+
+    <p class="description">{{ product.description }}</p>
+
+    <!-- Size Selection -->
+    <div class="size-selection" *ngIf="product.sizes?.length">
+      <h3>Select Size</h3>
+      <div class="size-options">
+        <button
+          *ngFor="let size of product.sizes"
+          class="size-btn"
+          [class.selected]="selectedSize === size"
+          (click)="selectSize(size)"
+        >
+          {{ size }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Color Selection -->
+    <div class="color-selection" *ngIf="product.colors?.length">
+      <h3>Select Color</h3>
+      <div class="color-options">
+        <button
+          *ngFor="let color of product.colors"
+          class="color-btn"
+          [style.background-color]="color.code"
+          [class.selected]="selectedColor?.code === color.code"
+          (click)="selectColor(color)"
+        >
+          <span class="color-name">{{ color.name }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Quantity Selection -->
+    <div class="quantity-selection">
+      <h3>Quantity</h3>
+      <div class="quantity-controls">
+        <button (click)="decrementQuantity()" [disabled]="quantity === 1">-</button>
+        <input type="number" [(ngModel)]="quantity" min="1" [max]="product.stock">
+        <button (click)="incrementQuantity()" [disabled]="quantity >= product.stock">+</button>
+      </div>
+    </div>
+
+    <!-- Add to Cart -->
+    <button
+      class="add-to-cart-btn"
+      (click)="addToCart()"
+      [disabled]="!canAddToCart()"
+    >
+      {{ addToCartButtonText() }}
+    </button>
+
+    <div class="error-message" *ngIf="error">
+      {{ error }}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,52 @@
+<div class="product-list-container">
+  <!-- Filters and Search -->
+  <div class="filters-section">
+    <div class="search-box">
+      <input 
+        type="text" 
+        placeholder="Search products..." 
+        [value]="searchQuery"
+        (input)="onSearch($event)"
+      >
+    </div>
+
+    <div class="filter-controls">
+      <select [(ngModel)]="selectedCategory" (ngModelChange)="onCategoryChange()">
+        <option value="">All Categories</option>
+        <option *ngFor="let category of categories" [value]="category">
+          {{ category }}
+        </option>
+      </select>
+
+      <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()">
+        <option value="name">Sort by Name</option>
+        <option value="price-low">Price: Low to High</option>
+        <option value="price-high">Price: High to Low</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading products...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-state" *ngIf="error">
+    <p>{{ error }}</p>
+    <button (click)="loadProducts()">Try Again</button>
+  </div>
+
+  <!-- Products Grid -->
+  <div class="products-grid" *ngIf="!isLoading && !error">
+    <div *ngFor="let product of filteredProducts" class="product-item">
+      <app-product-card [product]="product"></app-product-card>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredProducts.length === 0">
+      <p>No products found matching your criteria.</p>
+    </div>
+  </div>
+</div>

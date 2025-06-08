@@ -1,0 +1,111 @@
+<div class="order-detail-page">
+  <div class="order-container">
+    <header class="page-header">
+      <h1>Order Details</h1>
+      <div class="order-meta">
+        <span class="order-id">Order #{{ order?._id }}</span>
+        <span [class]="'status-badge ' + order?.status">{{ order?.status }}</span>
+      </div>
+    </header>
+
+    <div class="alert error" *ngIf="error">{{ error }}</div>
+
+    <div class="order-content" *ngIf="order">
+      <div class="order-info">
+        <div class="info-section">
+          <h2>Order Summary</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">Order Date</span>
+              <span class="value">{{ order.createdAt | date:'medium' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Status</span>
+              <span class="value">{{ order.status }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Total Items</span>
+              <span class="value">{{ order.items.length }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Total Amount</span>
+              <span class="value">${{ order.total.toFixed(2) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <h2>Shipping Address</h2>
+          <div class="address-details">
+            <p>{{ order.shippingAddress.fullName }}</p>
+            <p>{{ order.shippingAddress.addressLine1 }}</p>
+            <p *ngIf="order.shippingAddress.addressLine2">
+              {{ order.shippingAddress.addressLine2 }}
+            </p>
+            <p>
+              {{ order.shippingAddress.city }}, 
+              {{ order.shippingAddress.state }} 
+              {{ order.shippingAddress.zipCode }}
+            </p>
+            <p>{{ order.shippingAddress.country }}</p>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <h2>Payment Information</h2>
+          <div class="payment-details">
+            <p>Card ending in {{ order.paymentDetails.cardNumber.slice(-4) }}</p>
+            <p>Expiry: {{ order.paymentDetails.expiryDate }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-items">
+        <h2>Order Items</h2>
+        <div class="items-list">
+          <div class="item-card" *ngFor="let item of order.items">
+            <div class="item-image">
+              <img [src]="item.product.images?.[0] || 'assets/images/placeholder.jpg'" [alt]="item.product.name">
+            </div>
+            <div class="item-details">
+              <h3>{{ item.product.name }}</h3>
+              <p class="item-meta">
+                <span *ngIf="item.size">Size: {{ item.size }}</span>
+                <span *ngIf="item.color">
+                  Color: 
+                  <span 
+                    class="color-dot"
+                    [style.background-color]="item.color.code"
+                    [title]="item.color.name"
+                  ></span>
+                  {{ item.color.name }}
+                </span>
+              </p>
+              <div class="item-price">
+                <span class="quantity">Qty: {{ item.quantity }}</span>
+                <span class="price">${{ (item.price * item.quantity).toFixed(2) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-summary">
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span>${{ order.subtotal.toFixed(2) }}</span>
+        </div>
+        <div class="summary-row">
+          <span>Shipping</span>
+          <span>Free</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total</span>
+          <span>${{ order.total.toFixed(2) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading" *ngIf="isLoading">Loading order details...</div>
+  </div>
+</div>

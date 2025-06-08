@@ -1,0 +1,80 @@
+<div class="admin-dashboard">
+  <h1>Admin Dashboard</h1>
+  
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h3>Total Orders</h3>
+      <p class="stat-value">{{ stats.totalOrders }}</p>
+    </div>
+    <div class="stat-card">
+      <h3>Total Products</h3>
+      <p class="stat-value">{{ stats.totalProducts }}</p>
+    </div>
+    <div class="stat-card">
+      <h3>Total Revenue</h3>
+      <p class="stat-value">${{ stats.totalRevenue.toFixed(2) }}</p>
+    </div>
+  </div>
+
+  <div class="dashboard-sections">
+    <section class="recent-orders">
+      <h2>Recent Orders</h2>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of stats.recentOrders">
+              <td>{{ order.id }}</td>
+              <td>{{ order.customerName }}</td>
+              <td>${{ order.total.toFixed(2) }}</td>
+              <td>
+                <span [class]="'status-badge ' + order.status.toLowerCase()">
+                  {{ order.status }}
+                </span>
+              </td>
+              <td>{{ order.date | date:'short' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="low-stock">
+      <h2>Low Stock Products</h2>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Stock</th>
+              <th>Category</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of stats.lowStockProducts">
+              <td>{{ product.name }}</td>
+              <td>
+                <span [class.critical]="product.stock < 5">
+                  {{ product.stock }}
+                </span>
+              </td>
+              <td>{{ product.category }}</td>
+              <td>
+                <a [routerLink]="['/admin/products', product._id]">Update Stock</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>

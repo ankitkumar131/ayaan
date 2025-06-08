@@ -1,0 +1,57 @@
+<div class="landing-container">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Discover Your Style</h1>
+      <p>Curated collections for the modern wardrobe</p>
+      <div class="cta-buttons">
+        <a routerLink="/products" [queryParams]="{gender: 'men'}" class="cta-button">Shop Men</a>
+        <a routerLink="/products" [queryParams]="{gender: 'women'}" class="cta-button">Shop Women</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Categories -->
+  <section class="featured-categories">
+    <h2>Featured Collections</h2>
+    <div class="category-grid">
+      <div class="category-card" *ngFor="let category of featuredCategories">
+        <img [src]="category.image" [alt]="category.name">
+        <div class="category-content">
+          <h3>{{ category.name }}</h3>
+          <p>{{ category.description }}</p>
+          <a [routerLink]="['/products']" [queryParams]="{category: category.id}" class="shop-link">Shop Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- New Arrivals -->
+  <section class="new-arrivals">
+    <h2>New Arrivals</h2>
+    <div class="product-grid">
+      <div class="product-card" *ngFor="let product of newArrivals">
+        <div class="product-image">
+          <img [src]="product.images[0]" [alt]="product.name">
+        </div>
+        <div class="product-details">
+          <h3>{{ product.name }}</h3>
+          <p class="price">${{ product.price }}</p>
+          <a [routerLink]="['/products', product._id]" class="view-product">View Details</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="newsletter">
+    <div class="newsletter-content">
+      <h2>Stay Updated</h2>
+      <p>Subscribe to our newsletter for exclusive offers and updates</p>
+      <form (ngSubmit)="onSubscribe()" class="subscribe-form">
+        <input type="email" [(ngModel)]="email" name="email" placeholder="Enter your email" required>
+        <button type="submit" class="subscribe-button">Subscribe</button>
+      </form>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,160 @@
+<div class="profile-container" *ngIf="user">
+  <div class="profile-card">
+    <div class="profile-header">
+      <h2>Profile</h2>
+      <button class="edit-btn" (click)="isEditing = !isEditing">
+        {{ isEditing ? 'Cancel' : 'Edit Profile' }}
+      </button>
+    </div>
+
+    <form *ngIf="isEditing" [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          formControlName="username"
+          class="form-control"
+        >
+        <div class="error-message" *ngIf="profileForm.get('username')?.errors?.['required'] && profileForm.get('username')?.touched">
+          Username is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          class="form-control"
+        >
+        <div class="error-message" *ngIf="profileForm.get('email')?.errors?.['required'] && profileForm.get('email')?.touched">
+          Email is required
+        </div>
+        <div class="error-message" *ngIf="profileForm.get('email')?.errors?.['email'] && profileForm.get('email')?.touched">
+          Please enter a valid email
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone</label>
+        <input
+          type="tel"
+          id="phone"
+          formControlName="phone"
+          class="form-control"
+        >
+      </div>
+
+      <div formGroupName="address">
+        <h3>Address</h3>
+        <div class="form-group">
+          <label for="street">Street</label>
+          <input
+            type="text"
+            id="street"
+            formControlName="street"
+            class="form-control"
+          >
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="city">City</label>
+            <input
+              type="text"
+              id="city"
+              formControlName="city"
+              class="form-control"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="state">State</label>
+            <input
+              type="text"
+              id="state"
+              formControlName="state"
+              class="form-control"
+            >
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="zipCode">ZIP Code</label>
+            <input
+              type="text"
+              id="zipCode"
+              formControlName="zipCode"
+              class="form-control"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="country">Country</label>
+            <input
+              type="text"
+              id="country"
+              formControlName="country"
+              class="form-control"
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary" [disabled]="profileForm.invalid || isLoading">
+          {{ isLoading ? 'Saving...' : 'Save Changes' }}
+        </button>
+      </div>
+    </form>
+
+    <div class="profile-info" *ngIf="!isEditing">
+      <div class="info-row">
+        <span class="label">Username</span>
+        <span class="value">{{ user.username }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Email</span>
+        <span class="value">{{ user.email }}</span>
+      </div>
+      <div class="info-row" *ngIf="user.phone">
+        <span class="label">Phone</span>
+        <span class="value">{{ user.phone }}</span>
+      </div>
+
+      <div class="address-section" *ngIf="user.address">
+        <h3>Address</h3>
+        <div class="info-row" *ngIf="user.address.street">
+          <span class="label">Street</span>
+          <span class="value">{{ user.address.street }}</span>
+        </div>
+        <div class="info-row" *ngIf="user.address.city">
+          <span class="label">City</span>
+          <span class="value">{{ user.address.city }}</span>
+        </div>
+        <div class="info-row" *ngIf="user.address.state">
+          <span class="label">State</span>
+          <span class="value">{{ user.address.state }}</span>
+        </div>
+        <div class="info-row" *ngIf="user.address.zipCode">
+          <span class="label">ZIP Code</span>
+          <span class="value">{{ user.address.zipCode }}</span>
+        </div>
+        <div class="info-row" *ngIf="user.address.country">
+          <span class="label">Country</span>
+          <span class="value">{{ user.address.country }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert error" *ngIf="error">
+      {{ error }}
+    </div>
+    <div class="alert success" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+  </div>
+</div> 

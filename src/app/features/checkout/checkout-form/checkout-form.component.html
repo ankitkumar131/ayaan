@@ -1,0 +1,144 @@
+<div class="checkout-container">
+  <div class="checkout-content">
+    <div class="checkout-form-section">
+      <h2>Checkout</h2>
+      <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" class="checkout-form">
+        <div class="form-section" formGroupName="shippingAddress">
+          <h3>Shipping Address</h3>
+          
+          <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input 
+              type="text" 
+              id="fullName" 
+              formControlName="fullName"
+              [class.error]="checkoutForm.get('shippingAddress.fullName')?.invalid && checkoutForm.get('shippingAddress.fullName')?.touched"
+            >
+            <span class="error-message">{{ getErrorMessage('shippingAddress.fullName') }}</span>
+          </div>
+
+          <div class="form-group">
+            <label for="addressLine1">Address Line 1</label>
+            <input 
+              type="text" 
+              id="addressLine1" 
+              formControlName="addressLine1"
+              [class.error]="checkoutForm.get('shippingAddress.addressLine1')?.invalid && checkoutForm.get('shippingAddress.addressLine1')?.touched"
+            >
+            <span class="error-message">{{ getErrorMessage('shippingAddress.addressLine1') }}</span>
+          </div>
+
+          <div class="form-group">
+            <label for="addressLine2">Address Line 2 (Optional)</label>
+            <input 
+              type="text" 
+              id="addressLine2" 
+              formControlName="addressLine2"
+            >
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="city">City</label>
+              <input 
+                type="text" 
+                id="city" 
+                formControlName="city"
+                [class.error]="checkoutForm.get('shippingAddress.city')?.invalid && checkoutForm.get('shippingAddress.city')?.touched"
+              >
+              <span class="error-message">{{ getErrorMessage('shippingAddress.city') }}</span>
+            </div>
+
+            <div class="form-group">
+              <label for="state">State</label>
+              <input 
+                type="text" 
+                id="state" 
+                formControlName="state"
+                [class.error]="checkoutForm.get('shippingAddress.state')?.invalid && checkoutForm.get('shippingAddress.state')?.touched"
+              >
+              <span class="error-message">{{ getErrorMessage('shippingAddress.state') }}</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="zipCode">ZIP Code</label>
+              <input 
+                type="text" 
+                id="zipCode" 
+                formControlName="zipCode"
+                [class.error]="checkoutForm.get('shippingAddress.zipCode')?.invalid && checkoutForm.get('shippingAddress.zipCode')?.touched"
+              >
+              <span class="error-message">{{ getErrorMessage('shippingAddress.zipCode') }}</span>
+            </div>
+
+            <div class="form-group">
+              <label for="country">Country</label>
+              <input 
+                type="text" 
+                id="country" 
+                formControlName="country"
+                [class.error]="checkoutForm.get('shippingAddress.country')?.invalid && checkoutForm.get('shippingAddress.country')?.touched"
+              >
+              <span class="error-message">{{ getErrorMessage('shippingAddress.country') }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section" formGroupName="paymentDetails">
+          <h3>Payment Details</h3>
+          
+          <div class="form-group">
+            <label for="cardNumber">Card Number</label>
+            <input 
+              type="text" 
+              id="cardNumber" 
+              formControlName="cardNumber"
+              [class.error]="checkoutForm.get('paymentDetails.cardNumber')?.invalid && checkoutForm.get('paymentDetails.cardNumber')?.touched"
+            >
+            <span class="error-message">{{ getErrorMessage('paymentDetails.cardNumber') }}</span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="expiryDate">Expiry Date</label>
+              <input 
+                type="text" 
+                id="expiryDate" 
+                formControlName="expiryDate"
+                placeholder="MM/YY"
+                [class.error]="checkoutForm.get('paymentDetails.expiryDate')?.invalid && checkoutForm.get('paymentDetails.expiryDate')?.touched"
+              >
+              <span class="error-message">{{ getErrorMessage('paymentDetails.expiryDate') }}</span>
+            </div>
+
+            <div class="form-group">
+              <label for="cvv">CVV</label>
+              <input 
+                type="text" 
+                id="cvv" 
+                formControlName="cvv"
+                [class.error]="checkoutForm.get('paymentDetails.cvv')?.invalid && checkoutForm.get('paymentDetails.cvv')?.touched"
+              >
+              <span class="error-message">{{ getErrorMessage('paymentDetails.cvv') }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="error-alert" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <button type="submit" [disabled]="checkoutForm.invalid || isLoading" class="submit-button">
+          <span *ngIf="!isLoading">Place Order</span>
+          <span *ngIf="isLoading" class="spinner"></span>
+        </button>
+      </form>
+    </div>
+
+    <div class="order-summary-section">
+      <app-order-summary [cart]="cart"></app-order-summary>
+    </div>
+  </div>
+</div>
