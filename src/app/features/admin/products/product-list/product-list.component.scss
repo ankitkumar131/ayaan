@@ -1,0 +1,30 @@
+.product-thumbnail {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sortable:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.page-link {
+  cursor: pointer;
+}
+
+.table th {
+  position: relative;
+}
+
+.table th i.fas {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}

@@ -95,7 +95,7 @@
             >
             <div *ngIf="addressForm.get('zipCode')?.invalid && addressForm.get('zipCode')?.touched" class="error-text">
               <span *ngIf="addressForm.get('zipCode')?.errors?.['required']">ZIP code is required</span>
-              <span *ngIf="addressForm.get('zipCode')?.errors?.['pattern']">Enter a valid ZIP code</span>
+              <span *ngIf="addressForm.get('zipCode')?.errors?.['pattern']">Enter a valid 6-digit ZIP code</span>
             </div>
           </div>
           

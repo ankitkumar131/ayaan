@@ -253,5 +253,6 @@ router.get('/user-statistics', [authenticate, isAdmin], async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
-
-module.exports = router; 
+router.get('/dashboard/stats', dashboardController.getStatistics);
+router.get('/dashboard/activity', dashboardController.getRecentActivity);
+module.exports = router;

@@ -1,0 +1,53 @@
+<div class="admin-list-container">
+  <div class="admin-list-header">
+    <h1>Admin Management</h1>
+    <p>View and manage administrator accounts</p>
+  </div>
+
+  <div class="admin-list-actions">
+    <a routerLink="/auth/register-admin" class="btn btn-primary">Register New Admin</a>
+    <a routerLink="/admin/dashboard" class="btn btn-secondary">Back to Dashboard</a>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading administrators...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-state">
+    <div class="error-icon">⚠️</div>
+    <p>{{ error }}</p>
+    <button (click)="loadAdmins()" class="btn btn-retry">Try Again</button>
+  </div>
+
+  <!-- Admin List -->
+  <div *ngIf="!isLoading && !error" class="admin-list">
+    <div *ngIf="admins.length === 0" class="no-admins">
+      <p>No administrators found.</p>
+      <a routerLink="/auth/register-admin" class="btn btn-primary">Register New Admin</a>
+    </div>
+
+    <table *ngIf="admins.length > 0" class="admin-table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Created At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let admin of admins">
+          <td>{{ admin.username }}</td>
+          <td>{{ admin.email }}</td>
+          <td>{{ admin.name }}</td>
+          <td>{{ admin.phone || 'N/A' }}</td>
+          <td>{{ admin.createdAt | date:'medium' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

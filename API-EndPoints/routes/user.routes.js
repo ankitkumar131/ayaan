@@ -6,7 +6,7 @@ const path = require('path');
 const User = require('../models/schemas/user.schema');
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
-
+ 
 // Import controllers
 const getProfile = require('../controllers/user/profile.controller');
 

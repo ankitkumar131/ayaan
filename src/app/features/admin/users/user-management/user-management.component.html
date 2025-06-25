@@ -1,0 +1,180 @@
+<div class="container-fluid p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">User Management</h1>
+    <div>
+      <a routerLink="/admin/dashboard" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+  </div>
+
+  <div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex flex-wrap justify-content-between align-items-center">
+      <h6 class="m-0 font-weight-bold text-primary">Users</h6>
+      <div class="d-flex flex-wrap">
+        <!-- Search Box -->
+        <div class="input-group me-2 mb-2 mb-md-0" style="width: 250px;">
+          <input 
+            type="text" 
+            class="form-control" 
+            placeholder="Search users..." 
+            [value]="searchTerm"
+            (input)="onSearch($event)"
+          >
+          <span class="input-group-text">
+            <i class="fas fa-search"></i>
+          </span>
+        </div>
+
+        <!-- Role Filter -->
+        <div class="me-2 mb-2 mb-md-0">
+          <select class="form-select" (change)="onRoleFilterChange($event)">
+            <option value="all">All Roles</option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <!-- Status Filter -->
+        <div class="mb-2 mb-md-0">
+          <select class="form-select" (change)="onStatusFilterChange($event)">
+            <option value="all">All Status</option>
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <!-- Loading State -->
+      <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading users...</p>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="error && !loading" class="alert alert-danger">
+        {{ error }}
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!loading && !error && users.length === 0" class="text-center py-5">
+        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+        <p>No users found. Try adjusting your search or filters.</p>
+      </div>
+
+      <!-- Users Table -->
+      <div *ngIf="!loading && !error && users.length > 0" class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead class="table-light">
+            <tr>
+              <th (click)="onSort('name')" class="sortable">
+                Name <i class="fas" [ngClass]="getSortIcon('name')"></i>
+              </th>
+              <th (click)="onSort('email')" class="sortable">
+                Email <i class="fas" [ngClass]="getSortIcon('email')"></i>
+              </th>
+              <th (click)="onSort('role')" class="sortable">
+                Role <i class="fas" [ngClass]="getSortIcon('role')"></i>
+              </th>
+              <th (click)="onSort('isActive')" class="sortable">
+                Status <i class="fas" [ngClass]="getSortIcon('isActive')"></i>
+              </th>
+              <th (click)="onSort('createdAt')" class="sortable">
+                Joined <i class="fas" [ngClass]="getSortIcon('createdAt')"></i>
+              </th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users">
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="avatar-circle me-2" [ngStyle]="{'background-color': '#6c757d'}">
+                    {{ user.name.charAt(0).toUpperCase() }}
+                  </div>
+                  <div>
+                    <p class="mb-0 fw-bold">{{ user.name }}</p>
+                    <small *ngIf="user.phone" class="text-muted">{{ user.phone }}</small>
+                  </div>
+                </div>
+              </td>
+              <td>{{ user.email }}</td>
+              <td>
+                <span class="badge" [ngClass]="user.role === 'admin' ? 'bg-danger' : 'bg-primary'">
+                  {{ user.role | titlecase }}
+                </span>
+              </td>
+              <td>
+                <span class="badge" [ngClass]="isActive[user.id] ? 'bg-success' : 'bg-secondary'">
+                  {{ isActive[user.id] ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td>{{ user.createdAt | date:'mediumDate' }}</td>
+              <td>
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    Actions
+                  </button>
+                  <ul class="dropdown-menu">
+                    <!-- Status Toggle -->
+                    <li *ngIf="isActive[user.id]">
+                      <button class="dropdown-item text-danger" (click)="updateUserStatus(user.id, false)">
+                        <i class="fas fa-user-slash me-2"></i> Deactivate
+                      </button>
+                    </li>
+                    <li *ngIf="!isActive[user.id]">
+                      <button class="dropdown-item text-success" (click)="updateUserStatus(user.id, true)">
+                        <i class="fas fa-user-check me-2"></i> Activate
+                      </button>
+                    </li>
+                    
+                    <!-- Role Toggle -->
+                    <li *ngIf="user.role !== 'admin'">
+                      <button class="dropdown-item" (click)="updateUserRole(user.id, 'admin')">
+                        <i class="fas fa-user-shield me-2"></i> Make Admin
+                      </button>
+                    </li>
+                    <li *ngIf="user.role === 'admin'">
+                      <button class="dropdown-item" (click)="updateUserRole(user.id, 'user')">
+                        <i class="fas fa-user me-2"></i> Make Regular User
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="!loading && totalPages > 1" class="d-flex justify-content-between align-items-center mt-3">
+        <div>
+          <span class="text-muted">Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ Math.min(currentPage * pageSize, totalUsers) }} of {{ totalUsers }} users</span>
+        </div>
+        <nav>
+          <ul class="pagination mb-0">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <a class="page-link" href="javascript:void(0)" (click)="onPageChange(currentPage - 1)">
+                <i class="fas fa-chevron-left"></i>
+              </a>
+            </li>
+            <li *ngFor="let page of getPages()" class="page-item" [class.active]="page === currentPage">
+              <a class="page-link" href="javascript:void(0)" (click)="onPageChange(page)">
+                {{ page }}
+              </a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+              <a class="page-link" href="javascript:void(0)" (click)="onPageChange(currentPage + 1)">
+                <i class="fas fa-chevron-right"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>

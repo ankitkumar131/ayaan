@@ -1,0 +1,99 @@
+<div class="admin-dashboard-container">
+  <div class="dashboard-header">
+    <h1>Admin Dashboard</h1>
+    <p *ngIf="currentAdmin">Welcome, {{ currentAdmin.username }}!</p>
+  </div>
+
+  <div class="dashboard-actions">
+    <a routerLink="/admin/admins" class="btn btn-primary">Manage Admins</a>
+    <a routerLink="/auth/register-admin" class="btn btn-success">Register New Admin</a>
+  </div>
+
+  <div class="dashboard-stats">
+    <div class="stat-card">
+      <div class="stat-icon users-icon">👥</div>
+      <div class="stat-content">
+        <h3>Total Users</h3>
+        <p class="stat-value">{{ stats.totalUsers }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon admins-icon">👑</div>
+      <div class="stat-content">
+        <h3>Total Admins</h3>
+        <p class="stat-value">{{ stats.totalAdmins }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon orders-icon">📦</div>
+      <div class="stat-content">
+        <h3>Total Orders</h3>
+        <p class="stat-value">{{ stats.totalOrders }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon products-icon">🛍️</div>
+      <div class="stat-content">
+        <h3>Total Products</h3>
+        <p class="stat-value">{{ stats.totalProducts }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="recent-activity">
+    <h2>Recent Activity</h2>
+    <div class="activity-list">
+      <div *ngIf="stats.recentActivity.length === 0" class="no-activity">
+        <p>No recent activity</p>
+      </div>
+      <div *ngFor="let activity of stats.recentActivity" class="activity-item">
+        <div class="activity-icon" [ngClass]="activity.type"></div>
+        <div class="activity-content">
+          <p class="activity-message">{{ activity.message }}</p>
+          <p class="activity-time">{{ activity.timestamp | date:'medium' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quick-links">
+    <h2>Quick Links</h2>
+    <div class="links-container">
+      <a routerLink="/admin/admins" class="quick-link">
+        <div class="link-icon">👥</div>
+        <span>Admin Management</span>
+      </a>
+      <a routerLink="/auth/register-admin" class="quick-link">
+        <div class="link-icon">➕</div>
+        <span>Add New Admin</span>
+      </a>
+      <a routerLink="/admin/products" class="quick-link">
+        <div class="link-icon">🛍️</div>
+        <span>Manage Products</span>
+      </a>
+      <a routerLink="/admin/products/add" class="quick-link">
+        <div class="link-icon">➕</div>
+        <span>Add Product</span>
+      </a>
+      <a routerLink="/admin/categories" class="quick-link">
+        <div class="link-icon">📁</div>
+        <span>Manage Categories</span>
+      </a>
+      <a routerLink="/admin/orders" class="quick-link">
+        <div class="link-icon">📦</div>
+        <span>Manage Orders</span>
+      </a>
+      <a routerLink="/admin/users" class="quick-link">
+        <div class="link-icon">👤</div>
+        <span>Manage Users</span>
+      </a>
+      <a routerLink="/admin/promotions" class="quick-link">
+        <div class="link-icon">🏷️</div>
+        <span>Manage Promotions</span>
+      </a>
+    </div>
+  </div>
+</div>

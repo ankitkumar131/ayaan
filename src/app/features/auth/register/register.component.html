@@ -39,6 +39,22 @@
           </div>
         </div>
 
+        <!-- Username Field -->
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input 
+            type="text" 
+            id="username" 
+            formControlName="username" 
+            placeholder="Choose a username"
+            [class.is-invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
+          >
+          <div class="validation-error" *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched">
+            <span *ngIf="registerForm.get('username')?.errors?.['required']">Username is required</span>
+            <span *ngIf="registerForm.get('username')?.errors?.['minlength']">Username must be at least 3 characters</span>
+          </div>
+        </div>
+
         <!-- Email Field -->
         <div class="form-group">
           <label for="email">Email</label>

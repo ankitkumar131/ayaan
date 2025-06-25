@@ -1,0 +1,61 @@
+.register-admin {
+  .admin-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .auth-form {
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+  }
+
+  .success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border-radius: 0.25rem;
+    border: 1px solid #c3e6cb;
+  }
+
+  .error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border-radius: 0.25rem;
+    border: 1px solid #f5c6cb;
+  }
+
+  .validation-error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+
+  .password-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    input {
+      flex-grow: 1;
+    }
+  }
+
+  .auth-links {
+    margin-top: 1.5rem;
+    text-align: center;
+    
+    a {
+      color: #007bff;
+      text-decoration: none;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

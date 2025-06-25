@@ -43,6 +43,7 @@ export class RegisterComponent implements OnInit {
     this.registerForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
+      username: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [
         Validators.required,
@@ -69,9 +70,10 @@ export class RegisterComponent implements OnInit {
     this.isSubmitting = true;
     this.errorMessage = null;
 
-    const { firstName, lastName, email, password } = this.registerForm.value;
+    const { firstName, lastName, username, email, password } = this.registerForm.value;
     
     const userData = {
+      username,
       firstName,
       lastName,
       email,
@@ -91,11 +93,12 @@ export class RegisterComponent implements OnInit {
       error: (error) => {
         this.isSubmitting = false;
         if (error.status === 409) {
-          this.errorMessage = 'Email already exists. Please use a different email or try logging in.';
+          this.errorMessage = 'This email is already registered';
+        } else if (error.error && error.error.message) {
+          this.errorMessage = error.error.message;
         } else {
-          this.errorMessage = 'Registration failed. Please try again later.';
+          this.errorMessage = 'Registration failed. Please try again.';
         }
-        console.error('Registration error', error);
       }
     });
   }

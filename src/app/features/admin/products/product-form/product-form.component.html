@@ -1,0 +1,300 @@
+<div class="container-fluid p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">{{ isEditMode ? 'Edit' : 'Add New' }} Product</h1>
+    <div>
+      <a routerLink="/admin/products" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Products
+      </a>
+    </div>
+  </div>
+
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">{{ isEditMode ? 'Edit' : 'Add New' }} Product</h6>
+    </div>
+    <div class="card-body">
+      <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading product data...</p>
+      </div>
+
+      <div *ngIf="error && !loading" class="alert alert-danger">
+        {{ error }}
+      </div>
+
+      <form *ngIf="!loading" [formGroup]="productForm" (ngSubmit)="onSubmit()" class="needs-validation">
+        <div class="row mb-4">
+          <div class="col-md-8">
+            <div class="card">
+              <div class="card-header">Basic Information</div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label for="name" class="form-label">Product Name *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="name" 
+                    formControlName="name"
+                    [ngClass]="{'is-invalid': productForm.get('name')?.invalid && productForm.get('name')?.touched}"
+                  >
+                  <div class="invalid-feedback" *ngIf="productForm.get('name')?.errors?.['required']">
+                    Product name is required.
+                  </div>
+                  <div class="invalid-feedback" *ngIf="productForm.get('name')?.errors?.['minlength']">
+                    Product name must be at least 3 characters long.
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="description" class="form-label">Description *</label>
+                  <textarea 
+                    class="form-control" 
+                    id="description" 
+                    rows="5" 
+                    formControlName="description"
+                    [ngClass]="{'is-invalid': productForm.get('description')?.invalid && productForm.get('description')?.touched}"
+                  ></textarea>
+                  <div class="invalid-feedback" *ngIf="productForm.get('description')?.errors?.['required']">
+                    Product description is required.
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="price" class="form-label">Price ($) *</label>
+                    <input 
+                      type="number" 
+                      class="form-control" 
+                      id="price" 
+                      formControlName="price"
+                      step="0.01"
+                      min="0.01"
+                      [ngClass]="{'is-invalid': productForm.get('price')?.invalid && productForm.get('price')?.touched}"
+                    >
+                    <div class="invalid-feedback" *ngIf="productForm.get('price')?.errors?.['required']">
+                      Price is required.
+                    </div>
+                    <div class="invalid-feedback" *ngIf="productForm.get('price')?.errors?.['min']">
+                      Price must be greater than 0.
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label for="discountPrice" class="form-label">Discount Price ($)</label>
+                    <input 
+                      type="number" 
+                      class="form-control" 
+                      id="discountPrice" 
+                      formControlName="discountPrice"
+                      step="0.01"
+                      min="0"
+                    >
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="category" class="form-label">Category *</label>
+                    <select 
+                      class="form-select" 
+                      id="category" 
+                      formControlName="category"
+                      [ngClass]="{'is-invalid': productForm.get('category')?.invalid && productForm.get('category')?.touched}"
+                    >
+                      <option value="" disabled>Select a category</option>
+                      <option *ngFor="let category of categories" [value]="category.id">
+                        {{ category.name }}
+                      </option>
+                    </select>
+                    <div class="invalid-feedback" *ngIf="productForm.get('category')?.errors?.['required']">
+                      Category is required.
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <label for="stock" class="form-label">Stock *</label>
+                    <input 
+                      type="number" 
+                      class="form-control" 
+                      id="stock" 
+                      formControlName="stock"
+                      min="0"
+                      [ngClass]="{'is-invalid': productForm.get('stock')?.invalid && productForm.get('stock')?.touched}"
+                    >
+                    <div class="invalid-feedback" *ngIf="productForm.get('stock')?.errors?.['required']">
+                      Stock is required.
+                    </div>
+                    <div class="invalid-feedback" *ngIf="productForm.get('stock')?.errors?.['min']">
+                      Stock cannot be negative.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <div class="form-check">
+                      <input 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        id="isFeatured" 
+                        formControlName="isFeatured"
+                      >
+                      <label class="form-check-label" for="isFeatured">
+                        Featured Product
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <div class="form-check">
+                      <input 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        id="isNewArrival" 
+                        formControlName="isNewArrival"
+                      >
+                      <label class="form-check-label" for="isNewArrival">
+                        New Arrival
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="card mb-4">
+              <div class="card-header">Product Images</div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label for="images" class="form-label">Upload Images</label>
+                  <input 
+                    type="file" 
+                    class="form-control" 
+                    id="images" 
+                    multiple 
+                    accept="image/*"
+                    (change)="onFileChange($event)"
+                  >
+                  <small class="form-text text-muted">You can upload multiple images.</small>
+                </div>
+
+                <div class="image-preview-container mt-3" *ngIf="imagePreviewUrls.length > 0">
+                  <h6>Image Previews:</h6>
+                  <div class="row g-2">
+                    <div class="col-6 col-sm-4" *ngFor="let url of imagePreviewUrls; let i = index">
+                      <div class="image-preview-item">
+                        <img [src]="url" class="img-thumbnail" alt="Product image preview">
+                        <button type="button" class="btn btn-sm btn-danger remove-image" (click)="removeImage(i)">
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">Product Features</div>
+              <div class="card-body">
+                <div formArrayName="features">
+                  <div class="mb-2" *ngFor="let feature of features.controls; let i = index">
+                    <div class="input-group">
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        [formControlName]="i"
+                        placeholder="Feature"
+                        [ngClass]="{'is-invalid': feature.invalid && feature.touched}"
+                      >
+                      <button 
+                        type="button" 
+                        class="btn btn-outline-danger" 
+                        (click)="removeFeature(i)"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-primary btn-sm mt-2" 
+                    (click)="addFeature()"
+                  >
+                    <i class="fas fa-plus"></i> Add Feature
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mb-4">
+          <div class="card-header">Product Specifications</div>
+          <div class="card-body">
+            <div formArrayName="specifications">
+              <div class="row mb-2" *ngFor="let spec of specifications.controls; let i = index" [formGroupName]="i">
+                <div class="col-md-5">
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    formControlName="key"
+                    placeholder="Specification Name"
+                    [ngClass]="{'is-invalid': spec.get('key')?.invalid && spec.get('key')?.touched}"
+                  >
+                </div>
+                <div class="col-md-5">
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    formControlName="value"
+                    placeholder="Specification Value"
+                    [ngClass]="{'is-invalid': spec.get('value')?.invalid && spec.get('value')?.touched}"
+                  >
+                </div>
+                <div class="col-md-2">
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-danger w-100" 
+                    (click)="removeSpecification(i)"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+              <button 
+                type="button" 
+                class="btn btn-outline-primary btn-sm mt-2" 
+                (click)="addSpecification()"
+              >
+                <i class="fas fa-plus"></i> Add Specification
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end mt-4">
+          <button 
+            type="button" 
+            class="btn btn-outline-secondary me-2" 
+            routerLink="/admin/products"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            class="btn btn-primary" 
+            [disabled]="submitting || productForm.invalid"
+          >
+            <span *ngIf="submitting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+            {{ isEditMode ? 'Update' : 'Create' }} Product
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

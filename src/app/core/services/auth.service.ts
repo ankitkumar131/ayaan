@@ -44,6 +44,16 @@ export class AuthService {
       );
   }
 
+  registerAdmin(adminData: any): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/auth/register-admin`, adminData)
+      .pipe(
+        catchError(error => {
+          console.error('Admin registration error in service:', error);
+          return throwError(() => error);
+        })
+      );
+  }
+
   login(email: string, password: string): Observable<any> {
     return this.http.post<any>(`${environment.apiUrl}/auth/login`, { email, password })
       .pipe(
@@ -57,12 +67,14 @@ export class AuthService {
   }
 
   adminLogin(email: string, password: string): Observable<any> {
-    return this.http.post<any>(`${environment.apiUrl}/auth/admin/login`, { email, password })
+    return this.http.post<any>(`${environment.apiUrl}/admin/auth/login`, { email, password })
       .pipe(
         tap(response => {
           this.setSession(response);
+          console.log('Admin login successful:', response);
         }),
         catchError(error => {
+          console.error('Admin login error in service:', error);
           return throwError(() => error);
         })
       );

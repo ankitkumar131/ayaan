@@ -23,11 +23,11 @@ export class UserService {
   }
 
   updateUserPassword(data: { currentPassword: string; newPassword: string }): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/password`, data);
+    return this.http.put<any>(`${this.apiUrl}/profile/password`, data);
   }
 
   updateUserAddress(addressData: any): Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/address`, addressData);
+    return this.http.put<User>(`${this.apiUrl}/profile/address`, addressData);
   }
 
   uploadProfileImage(imageData: FormData): Observable<User> {

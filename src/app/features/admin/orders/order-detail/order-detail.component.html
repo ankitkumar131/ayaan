@@ -1,0 +1,259 @@
+<div class="container-fluid p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">
+      Order Details
+      <span *ngIf="order" class="text-muted fs-6">#{{ order.id.substring(0, 8) }}</span>
+    </h1>
+    <div>
+      <a routerLink="/admin/orders" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Orders
+      </a>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading order details...</p>
+  </div>
+
+  <div *ngIf="error && !loading" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error && !order" class="text-center py-5">
+    <i class="fas fa-exclamation-circle fa-3x text-muted mb-3"></i>
+    <p>Order not found. The order may have been deleted or you may not have permission to view it.</p>
+    <a routerLink="/admin/orders" class="btn btn-primary mt-2">
+      <i class="fas fa-arrow-left"></i> Back to Orders
+    </a>
+  </div>
+
+  <div *ngIf="!loading && !error && order" class="row">
+    <!-- Order Summary -->
+    <div class="col-lg-4 mb-4">
+      <div class="card shadow h-100">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+          <h6 class="m-0 font-weight-bold text-primary">Order Summary</h6>
+          <span class="badge" [ngClass]="getStatusClass(order.status)">
+            {{ order.status | titlecase }}
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <h6 class="text-muted">Order ID</h6>
+            <p class="mb-0">{{ order.id }}</p>
+          </div>
+          <div class="mb-3">
+            <h6 class="text-muted">Date</h6>
+            <p class="mb-0">{{ order.createdAt | date:'medium' }}</p>
+          </div>
+          <div class="mb-3">
+            <h6 class="text-muted">Customer</h6>
+            <p class="mb-0">{{ order.user.name }}</p>
+            <p class="mb-0">{{ order.user.email }}</p>
+          </div>
+          <div class="mb-3">
+            <h6 class="text-muted">Payment Method</h6>
+            <p class="mb-0">{{ order.paymentMethod }}</p>
+          </div>
+          <div class="mb-3">
+            <h6 class="text-muted">Shipping Method</h6>
+            <p class="mb-0">{{ order.shippingMethod }}</p>
+          </div>
+          <div *ngIf="order.trackingNumber" class="mb-3">
+            <h6 class="text-muted">Tracking Number</h6>
+            <p class="mb-0">{{ order.trackingNumber }}</p>
+          </div>
+          <div *ngIf="order.estimatedDelivery" class="mb-3">
+            <h6 class="text-muted">Estimated Delivery</h6>
+            <p class="mb-0">{{ order.estimatedDelivery | date }}</p>
+          </div>
+          <div *ngIf="order.notes" class="mb-3">
+            <h6 class="text-muted">Notes</h6>
+            <p class="mb-0">{{ order.notes }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Items -->
+    <div class="col-lg-8 mb-4">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold text-primary">Order Items</h6>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th class="text-end">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of order.items">
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <img 
+                        *ngIf="item.product.image" 
+                        [src]="item.product.image" 
+                        alt="{{ item.product.name }}" 
+                        class="product-thumbnail me-2"
+                      >
+                      <div>
+                        <p class="mb-0 fw-bold">{{ item.product.name }}</p>
+                        <!-- Specifications removed as they don't exist in the OrderItem interface -->
+                        <small class="text-muted" *ngIf="item.product.id">
+                          Product ID: {{ item.product.id }}
+                        </small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>${{ item.price.toFixed(2) }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td class="text-end">${{ item.total.toFixed(2) }}</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3" class="text-end">Subtotal:</td>
+                  <td class="text-end">${{ order.subtotal.toFixed(2) }}</td>
+                </tr>
+                <tr>
+                  <td colspan="3" class="text-end">Tax:</td>
+                  <td class="text-end">${{ order.tax.toFixed(2) }}</td>
+                </tr>
+                <tr>
+                  <td colspan="3" class="text-end">Shipping:</td>
+                  <td class="text-end">${{ order.shippingCost.toFixed(2) }}</td>
+                </tr>
+                <tr *ngIf="order.discount > 0">
+                  <td colspan="3" class="text-end">Discount:</td>
+                  <td class="text-end">-${{ order.discount.toFixed(2) }}</td>
+                </tr>
+                <tr>
+                  <td colspan="3" class="text-end fw-bold">Total:</td>
+                  <td class="text-end fw-bold">${{ order.total.toFixed(2) }}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Addresses -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="card shadow h-100">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Shipping Address</h6>
+            </div>
+            <div class="card-body">
+              <p class="mb-1">{{ order.shippingAddress.fullName }}</p>
+              <p class="mb-1">{{ order.shippingAddress.street }}</p>
+              <p class="mb-1">{{ order.shippingAddress.city }}, {{ order.shippingAddress.state }} {{ order.shippingAddress.zipCode }}</p>
+              <p class="mb-1">{{ order.shippingAddress.country }}</p>
+              <p class="mb-0">{{ order.shippingAddress.phone }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card shadow h-100">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Billing Address</h6>
+            </div>
+            <div class="card-body">
+              <p class="mb-1">{{ order.billingAddress.fullName }}</p>
+              <p class="mb-1">{{ order.billingAddress.street }}</p>
+              <p class="mb-1">{{ order.billingAddress.city }}, {{ order.billingAddress.state }} {{ order.billingAddress.zipCode }}</p>
+              <p class="mb-1">{{ order.billingAddress.country }}</p>
+              <p class="mb-0">{{ order.billingAddress.phone }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Actions -->
+      <div class="card shadow">
+        <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold text-primary">Order Actions</h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <h6>Update Order Status</h6>
+              <div class="d-flex">
+                <button 
+                  *ngIf="canUpdateStatus(order.status, 'processing')" 
+                  class="btn btn-outline-info me-2" 
+                  (click)="updateOrderStatus('processing')"
+                  [disabled]="updatingStatus"
+                >
+                  <i class="fas fa-cog me-1"></i> Processing
+                </button>
+                <button 
+                  *ngIf="canUpdateStatus(order.status, 'shipped')" 
+                  class="btn btn-outline-primary me-2" 
+                  (click)="updateOrderStatus('shipped')"
+                  [disabled]="updatingStatus"
+                >
+                  <i class="fas fa-shipping-fast me-1"></i> Shipped
+                </button>
+                <button 
+                  *ngIf="canUpdateStatus(order.status, 'delivered')" 
+                  class="btn btn-outline-success me-2" 
+                  (click)="updateOrderStatus('delivered')"
+                  [disabled]="updatingStatus"
+                >
+                  <i class="fas fa-check-circle me-1"></i> Delivered
+                </button>
+                <button 
+                  *ngIf="canUpdateStatus(order.status, 'cancelled')" 
+                  class="btn btn-outline-danger me-2" 
+                  (click)="updateOrderStatus('cancelled')"
+                  [disabled]="updatingStatus"
+                >
+                  <i class="fas fa-times-circle me-1"></i> Cancel
+                </button>
+                <button 
+                  *ngIf="canUpdateStatus(order.status, 'refunded')" 
+                  class="btn btn-outline-secondary" 
+                  (click)="updateOrderStatus('refunded')"
+                  [disabled]="updatingStatus"
+                >
+                  <i class="fas fa-undo me-1"></i> Refund
+                </button>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <h6>Update Tracking Information</h6>
+              <div class="input-group">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  placeholder="Enter tracking number" 
+                  [(ngModel)]="trackingNumber"
+                  [disabled]="updatingTracking || order.status === 'cancelled' || order.status === 'refunded'"
+                >
+                <button 
+                  class="btn btn-primary" 
+                  (click)="updateTrackingInfo()"
+                  [disabled]="updatingTracking || !trackingNumber.trim() || order.status === 'cancelled' || order.status === 'refunded'"
+                >
+                  <i *ngIf="updatingTracking" class="fas fa-spinner fa-spin me-1"></i>
+                  <i *ngIf="!updatingTracking" class="fas fa-save me-1"></i>
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

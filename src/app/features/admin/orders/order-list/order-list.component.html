@@ -1,0 +1,192 @@
+<div class="container-fluid p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Order Management</h1>
+    <div>
+      <a routerLink="/admin/dashboard" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+  </div>
+
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">Orders List</h6>
+    </div>
+    <div class="card-body">
+      <div class="row mb-4">
+        <div class="col-md-3 mb-2">
+          <div class="input-group">
+            <input 
+              type="text" 
+              class="form-control" 
+              placeholder="Search orders..." 
+              [(ngModel)]="searchTerm"
+              (keyup.enter)="onSearch()"
+            >
+            <button class="btn btn-outline-secondary" type="button" (click)="onSearch()">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+        <div class="col-md-2 mb-2">
+          <select 
+            class="form-select" 
+            [(ngModel)]="statusFilter"
+            (change)="onStatusChange()"
+          >
+            <option value="">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="refunded">Refunded</option>
+          </select>
+        </div>
+        <div class="col-md-3 mb-2">
+          <div class="input-group">
+            <span class="input-group-text">From</span>
+            <input 
+              type="date" 
+              class="form-control" 
+              [(ngModel)]="startDate"
+              (change)="onDateFilterChange()"
+            >
+          </div>
+        </div>
+        <div class="col-md-3 mb-2">
+          <div class="input-group">
+            <span class="input-group-text">To</span>
+            <input 
+              type="date" 
+              class="form-control" 
+              [(ngModel)]="endDate"
+              (change)="onDateFilterChange()"
+            >
+          </div>
+        </div>
+        <div class="col-md-1 mb-2">
+          <button 
+            class="btn btn-outline-secondary w-100" 
+            (click)="startDate = null; endDate = null; onDateFilterChange()"
+            [disabled]="!startDate && !endDate"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading orders...</p>
+      </div>
+
+      <div *ngIf="error && !loading" class="alert alert-danger">
+        {{ error }}
+      </div>
+
+      <div *ngIf="!loading && !error && orders.length === 0" class="text-center py-5">
+        <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+        <p>No orders found. Try adjusting your search criteria.</p>
+      </div>
+
+      <div *ngIf="!loading && !error && orders.length > 0" class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead class="table-light">
+            <tr>
+              <th scope="col" (click)="onSortChange('id')" class="sortable">
+                Order ID <i class="fas" [ngClass]="getSortIcon('id')"></i>
+              </th>
+              <th scope="col" (click)="onSortChange('user.name')" class="sortable">
+                Customer <i class="fas" [ngClass]="getSortIcon('user.name')"></i>
+              </th>
+              <th scope="col" (click)="onSortChange('total')" class="sortable">
+                Total <i class="fas" [ngClass]="getSortIcon('total')"></i>
+              </th>
+              <th scope="col" (click)="onSortChange('status')" class="sortable">
+                Status <i class="fas" [ngClass]="getSortIcon('status')"></i>
+              </th>
+              <th scope="col" (click)="onSortChange('createdAt')" class="sortable">
+                Date <i class="fas" [ngClass]="getSortIcon('createdAt')"></i>
+              </th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of orders">
+              <td>
+                <a [routerLink]="['/admin/orders', order.id]" class="text-primary">
+                  #{{ order.id.substring(0, 8) }}
+                </a>
+              </td>
+              <td>{{ order.user.name }}</td>
+              <td>${{ order.total.toFixed(2) }}</td>
+              <td>
+                <span class="badge" [ngClass]="getStatusClass(order.status)">
+                  {{ order.status | titlecase }}
+                </span>
+              </td>
+              <td>{{ order.createdAt | date:'medium' }}</td>
+              <td>
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    Actions
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li>
+                      <a class="dropdown-item" [routerLink]="['/admin/orders', order.id]">
+                        <i class="fas fa-eye me-2"></i> View Details
+                      </a>
+                    </li>
+                    <li *ngIf="order.status === 'pending'">
+                      <a class="dropdown-item" href="javascript:void(0)" (click)="updateOrderStatus(order.id, 'processing')">
+                        <i class="fas fa-cog me-2"></i> Mark as Processing
+                      </a>
+                    </li>
+                    <li *ngIf="order.status === 'processing'">
+                      <a class="dropdown-item" href="javascript:void(0)" (click)="updateOrderStatus(order.id, 'shipped')">
+                        <i class="fas fa-shipping-fast me-2"></i> Mark as Shipped
+                      </a>
+                    </li>
+                    <li *ngIf="order.status === 'shipped'">
+                      <a class="dropdown-item" href="javascript:void(0)" (click)="updateOrderStatus(order.id, 'delivered')">
+                        <i class="fas fa-check-circle me-2"></i> Mark as Delivered
+                      </a>
+                    </li>
+                    <li *ngIf="order.status !== 'cancelled' && order.status !== 'refunded'">
+                      <a class="dropdown-item" href="javascript:void(0)" (click)="updateOrderStatus(order.id, 'cancelled')">
+                        <i class="fas fa-times-circle me-2"></i> Cancel Order
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div *ngIf="totalPages > 1" class="d-flex justify-content-center mt-4">
+          <nav aria-label="Order pagination">
+            <ul class="pagination">
+              <li class="page-item" [ngClass]="{disabled: currentPage === 1}">
+                <a class="page-link" (click)="onPageChange(currentPage - 1)" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              <li *ngFor="let page of pages" class="page-item" [ngClass]="{active: currentPage === page}">
+                <a class="page-link" (click)="onPageChange(page)">{{ page }}</a>
+              </li>
+              <li class="page-item" [ngClass]="{disabled: currentPage === totalPages}">
+                <a class="page-link" (click)="onPageChange(currentPage + 1)" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

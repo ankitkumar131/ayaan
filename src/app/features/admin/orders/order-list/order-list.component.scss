@@ -1,0 +1,36 @@
+.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sortable:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.page-link {
+  cursor: pointer;
+}
+
+.table th {
+  position: relative;
+}
+
+.table th i.fas {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.dropdown-item {
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+.dropdown-item i {
+  width: 16px;
+  text-align: center;
+}

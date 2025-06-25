@@ -19,7 +19,23 @@ const createProductValidator = [
   body('category')
     .trim()
     .notEmpty().withMessage('Category is required')
-    .isMongoId().withMessage('Invalid category ID'),
+    .custom(async (value) => {
+      if (!value) return Promise.reject('Category is required');
+      
+      // Check if it's a valid MongoDB ObjectId format
+      if (!/^[0-9a-fA-F]{24}$/.test(value)) {
+        return Promise.reject('Invalid category ID format');
+      }
+      
+      // Optionally check if category exists in database
+      const Category = require('../../models/category.model');
+      const category = await Category.findById(value);
+      if (!category) {
+        return Promise.reject('Category not found');
+      }
+      
+      return true;
+    }),
   
   body('stock')
     .trim()
@@ -46,4 +62,4 @@ const createProductValidator = [
     .withMessage('Invalid color code format (must be hex color)')
 ];
 
-module.exports = createProductValidator; 
+module.exports = createProductValidator;

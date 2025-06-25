@@ -27,7 +27,7 @@ export class AddressesComponent implements OnInit {
       street: ['', [Validators.required]],
       city: ['', [Validators.required]],
       state: ['', [Validators.required]],
-      zipCode: ['', [Validators.required, Validators.pattern(/^\d{5}(-\d{4})?$/)]],
+      zipCode: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
       country: ['', [Validators.required]]
     });
   }

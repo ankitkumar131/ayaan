@@ -41,6 +41,9 @@ async function startServer() {
 
 // Import routes
 const authRoutes = require('./routes/auth.routes');
+const adminAuthRoutes = require('./routes/admin-auth.routes');
+const adminUsersRoutes = require('./routes/admin-users.routes');
+const adminRoutes = require('./routes/admin.routes');
 const userRoutes = require('./routes/user.routes');
 const productRoutes = require('./routes/product.routes');
 const cartRoutes = require('./routes/cart.routes');
@@ -52,6 +55,9 @@ const requestRoutes = require('./routes/request.routes');
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/admin/auth', adminAuthRoutes);
+app.use('/api/admin/users', adminUsersRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
@@ -60,6 +66,11 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/promotions', promotionRoutes);
 app.use('/api', reviewRoutes);
 app.use('/api', requestRoutes);
+
+// Admin routes for categories, promotions, users, and products
+app.use('/api/admin/categories', categoryRoutes);
+app.use('/api/admin/promotions', promotionRoutes);
+app.use('/api/admin/products', productRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -76,4 +87,4 @@ app.use((req, res) => {
 });
 
 // Start the server
-startServer(); 
+startServer();

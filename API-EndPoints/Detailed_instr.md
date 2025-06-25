@@ -479,7 +479,7 @@ IMPORTANT: It is recommended to change the password immediately after first logi
    - Access admin dashboard
 
 ### Admin Registration
-Admin accounts cannot be created through the regular registration process. There are two ways to create an admin account:
+Admin accounts can be created in the following ways:
 
 1. **Direct Database Setup**
    - The first admin account should be created directly in the database during initial setup
@@ -495,7 +495,35 @@ Admin accounts cannot be created through the regular registration process. There
    })
    ```
 
-2. **Admin Invitation**
+2. **Admin Registration Endpoint**
+   - **Endpoint**: `POST /api/auth/register-admin`
+   - **Role**: Admin
+   - **Access**: Public (with admin key)
+   - **Form Data**:
+     ```
+     username: string (required)
+     email: string (required)
+     password: string (required)
+     firstName: string (required)
+     lastName: string (required)
+     phone: string (optional)
+     adminKey: string (required) - Secret key for admin registration
+     ```
+   - **Response**:
+     ```json
+     {
+       "message": "Admin user registered successfully",
+       "token": "JWT_TOKEN",
+       "user": {
+         "id": "user_id",
+         "username": "username",
+         "email": "email",
+         "role": "admin"
+       }
+     }
+     ```
+
+3. **Admin Invitation**
    - Only existing admins can create new admin accounts
    - **Endpoint**: `POST /api/admin/invite`
    - **Access**: Private (Admin only)
@@ -626,4 +654,4 @@ server.listen(PORT, async () => {
   await checkAndCreateDefaultAdmin();
   console.log(`Server running on port ${PORT}`);
 });
-``` 
+```

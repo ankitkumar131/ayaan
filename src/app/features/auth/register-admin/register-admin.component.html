@@ -1,0 +1,171 @@
+<div class="auth-container register-admin">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="admin-icon">👑</div>
+      <h1>Admin Registration</h1>
+      <p>Create a new administrator account</p>
+    </div>
+    
+    <form [formGroup]="registerAdminForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <!-- Success Message -->
+      <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
+      
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+      
+      <!-- Username Field -->
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input 
+          type="text" 
+          id="username" 
+          formControlName="username" 
+          placeholder="Enter username"
+          [class.is-invalid]="registerAdminForm.get('username')?.invalid && registerAdminForm.get('username')?.touched"
+        >
+        <div *ngIf="registerAdminForm.get('username')?.invalid && registerAdminForm.get('username')?.touched" class="validation-error">
+          <span *ngIf="registerAdminForm.get('username')?.errors?.['required']">Username is required</span>
+          <span *ngIf="registerAdminForm.get('username')?.errors?.['minlength']">Username must be at least 3 characters</span>
+        </div>
+      </div>
+      
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          formControlName="email" 
+          placeholder="Enter email"
+          [class.is-invalid]="registerAdminForm.get('email')?.invalid && registerAdminForm.get('email')?.touched"
+        >
+        <div *ngIf="registerAdminForm.get('email')?.invalid && registerAdminForm.get('email')?.touched" class="validation-error">
+          <span *ngIf="registerAdminForm.get('email')?.errors?.['required']">Email is required</span>
+          <span *ngIf="registerAdminForm.get('email')?.errors?.['email']">Please enter a valid email</span>
+        </div>
+      </div>
+      
+      <!-- First Name Field -->
+      <div class="form-group">
+        <label for="firstName">First Name</label>
+        <input 
+          type="text" 
+          id="firstName" 
+          formControlName="firstName" 
+          placeholder="Enter first name"
+          [class.is-invalid]="registerAdminForm.get('firstName')?.invalid && registerAdminForm.get('firstName')?.touched"
+        >
+        <div *ngIf="registerAdminForm.get('firstName')?.invalid && registerAdminForm.get('firstName')?.touched" class="validation-error">
+          <span *ngIf="registerAdminForm.get('firstName')?.errors?.['required']">First name is required</span>
+        </div>
+      </div>
+      
+      <!-- Last Name Field -->
+      <div class="form-group">
+        <label for="lastName">Last Name</label>
+        <input 
+          type="text" 
+          id="lastName" 
+          formControlName="lastName" 
+          placeholder="Enter last name"
+          [class.is-invalid]="registerAdminForm.get('lastName')?.invalid && registerAdminForm.get('lastName')?.touched"
+        >
+        <div *ngIf="registerAdminForm.get('lastName')?.invalid && registerAdminForm.get('lastName')?.touched" class="validation-error">
+          <span *ngIf="registerAdminForm.get('lastName')?.errors?.['required']">Last name is required</span>
+        </div>
+      </div>
+      
+      <!-- Phone Field -->
+      <div class="form-group">
+        <label for="phone">Phone (optional)</label>
+        <input 
+          type="tel" 
+          id="phone" 
+          formControlName="phone" 
+          placeholder="Enter phone number"
+          [class.is-invalid]="registerAdminForm.get('phone')?.invalid && registerAdminForm.get('phone')?.touched"
+        >
+        <div *ngIf="registerAdminForm.get('phone')?.invalid && registerAdminForm.get('phone')?.touched" class="validation-error">
+          <span *ngIf="registerAdminForm.get('phone')?.errors?.['pattern']">Please enter a valid phone number</span>
+        </div>
+      </div>
+      
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="password-input-container">
+          <input 
+            [type]="showPassword ? 'text' : 'password'" 
+            id="password" 
+            formControlName="password" 
+            placeholder="Enter password"
+            [class.is-invalid]="registerAdminForm.get('password')?.invalid && registerAdminForm.get('password')?.touched"
+          >
+          <app-password-toggle 
+            [(visible)]="showPassword"
+          ></app-password-toggle>
+        </div>
+        <div *ngIf="registerAdminForm.get('password')?.invalid && registerAdminForm.get('password')?.touched" class="validation-error">
+          <span *ngIf="registerAdminForm.get('password')?.errors?.['required']">Password is required</span>
+          <span *ngIf="registerAdminForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</span>
+          <span *ngIf="registerAdminForm.get('password')?.errors?.['pattern']">Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character</span>
+        </div>
+      </div>
+      
+      <!-- Confirm Password Field -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <div class="password-input-container">
+          <input 
+            [type]="showConfirmPassword ? 'text' : 'password'" 
+            id="confirmPassword" 
+            formControlName="confirmPassword" 
+            placeholder="Confirm password"
+            [class.is-invalid]="registerAdminForm.get('confirmPassword')?.invalid && registerAdminForm.get('confirmPassword')?.touched"
+          >
+          <app-password-toggle 
+            [(visible)]="showConfirmPassword"
+          ></app-password-toggle>
+        </div>
+        <div *ngIf="registerAdminForm.get('confirmPassword')?.invalid && registerAdminForm.get('confirmPassword')?.touched" class="validation-error">
+          <span *ngIf="registerAdminForm.get('confirmPassword')?.errors?.['required']">Please confirm your password</span>
+          <span *ngIf="registerAdminForm.get('confirmPassword')?.errors?.['passwordMismatch']">Passwords do not match</span>
+        </div>
+      </div>
+      
+      <!-- Admin Key Field -->
+      <div class="form-group">
+        <label for="adminKey">Admin Key</label>
+        <input 
+          type="password" 
+          id="adminKey" 
+          formControlName="adminKey" 
+          placeholder="Enter admin key"
+          [class.is-invalid]="registerAdminForm.get('adminKey')?.invalid && registerAdminForm.get('adminKey')?.touched"
+        >
+        <div *ngIf="registerAdminForm.get('adminKey')?.invalid && registerAdminForm.get('adminKey')?.touched" class="validation-error">
+          <span *ngIf="registerAdminForm.get('adminKey')?.errors?.['required']">Admin key is required</span>
+        </div>
+      </div>
+      
+      <!-- Submit Button -->
+      <button 
+        type="submit" 
+        class="btn btn-primary" 
+        [disabled]="registerAdminForm.invalid || isSubmitting"
+      >
+        <span *ngIf="isSubmitting">Registering...</span>
+        <span *ngIf="!isSubmitting">Register Admin</span>
+      </button>
+      
+      <!-- Login Link -->
+      <div class="auth-links">
+        <p>Already have an admin account? <a routerLink="/auth/admin-login">Login</a></p>
+      </div>
+    </form>
+  </div>
+</div>
