@@ -1,0 +1,197 @@
+@import '../../../../styles/variables';
+@import '../../../../styles/mixins';
+
+.auth-page {
+  min-height: calc(100vh - 200px);
+  @include flex-center;
+  padding: $spacing-2xl 0;
+  background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+}
+
+.auth-card {
+  background: $bg-color;
+  border-radius: $border-radius-xl;
+  box-shadow: $shadow-xl;
+  overflow: hidden;
+
+  ::ng-deep .card-body {
+    padding: 0;
+  }
+}
+
+.auth-header {
+  text-align: center;
+  padding: $spacing-2xl $spacing-xl $spacing-lg;
+  background: linear-gradient(135deg, $gray-50 0%, white 100%);
+
+  .auth-title {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: $text-color;
+    margin-bottom: $spacing-sm;
+  }
+
+  .auth-subtitle {
+    color: $text-muted;
+    font-size: $font-size-sm;
+    margin: 0;
+  }
+}
+
+.auth-form {
+  padding: $spacing-xl;
+
+  .form-options {
+    @include flex-between;
+    align-items: center;
+    margin-bottom: $spacing-lg;
+
+    .checkbox-label {
+      @include flex-center;
+      justify-content: flex-start;
+      gap: $spacing-xs;
+      font-size: $font-size-sm;
+      color: $text-color;
+      cursor: pointer;
+
+      input[type="checkbox"] {
+        margin: 0;
+        cursor: pointer;
+      }
+    }
+
+    .forgot-link {
+      font-size: $font-size-sm;
+      color: $primary-color;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .form-error {
+    background: rgba($danger-color, 0.1);
+    color: $danger-color;
+    padding: $spacing-sm $spacing-md;
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+    margin-bottom: $spacing-lg;
+    border: 1px solid rgba($danger-color, 0.2);
+  }
+}
+
+.auth-footer {
+  padding: $spacing-lg $spacing-xl $spacing-2xl;
+  text-align: center;
+  background: $gray-50;
+
+  .auth-switch {
+    font-size: $font-size-sm;
+    color: $text-muted;
+    margin-bottom: $spacing-lg;
+
+    .auth-link {
+      color: $primary-color;
+      text-decoration: none;
+      font-weight: $font-weight-medium;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .divider {
+    position: relative;
+    margin: $spacing-lg 0;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: $border-color;
+    }
+
+    span {
+      background: $gray-50;
+      padding: 0 $spacing-md;
+      color: $text-muted;
+      font-size: $font-size-sm;
+      position: relative;
+    }
+  }
+
+  .admin-link {
+    display: inline-block;
+    color: $secondary-color;
+    text-decoration: none;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    padding: $spacing-sm $spacing-md;
+    border: 1px solid $secondary-color;
+    border-radius: $border-radius-md;
+    transition: all $transition-normal;
+
+    &:hover {
+      background: $secondary-color;
+      color: white;
+      text-decoration: none;
+    }
+  }
+}
+
+// Responsive design
+@include mobile {
+  .auth-page {
+    padding: $spacing-lg 0;
+  }
+
+  .auth-container {
+    max-width: 100%;
+    padding: 0 $spacing-md;
+  }
+
+  .auth-header {
+    padding: $spacing-xl $spacing-lg $spacing-md;
+
+    .auth-title {
+      font-size: $font-size-xl;
+    }
+  }
+
+  .auth-form {
+    padding: $spacing-lg;
+  }
+
+  .auth-footer {
+    padding: $spacing-md $spacing-lg $spacing-xl;
+  }
+}
+
+// Animation
+.auth-card {
+  animation: slideInUp 0.5s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

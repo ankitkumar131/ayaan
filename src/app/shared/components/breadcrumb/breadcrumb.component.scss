@@ -1,0 +1,80 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.breadcrumb {
+  margin-bottom: $spacing-lg;
+}
+
+.breadcrumb-list {
+  @include flex-center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: $spacing-xs;
+}
+
+.breadcrumb-item {
+  @include flex-center;
+  gap: $spacing-xs;
+  font-size: $font-size-sm;
+
+  &.active {
+    .breadcrumb-text {
+      color: $text-color;
+      font-weight: $font-weight-medium;
+    }
+  }
+}
+
+.breadcrumb-separator {
+  color: $text-muted;
+  font-size: $font-size-sm;
+  user-select: none;
+}
+
+.breadcrumb-link {
+  color: $primary-color;
+  text-decoration: none;
+  transition: color $transition-normal;
+  
+  &:hover {
+    color: $primary-dark;
+    text-decoration: underline;
+  }
+  
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+    border-radius: $border-radius-sm;
+  }
+}
+
+.breadcrumb-text {
+  color: $text-muted;
+}
+
+// Responsive design
+@include mobile {
+  .breadcrumb-list {
+    font-size: $font-size-xs;
+  }
+  
+  .breadcrumb-item {
+    gap: 2px;
+  }
+  
+  .breadcrumb-separator {
+    font-size: $font-size-xs;
+  }
+}
+
+// Truncate long breadcrumb items on mobile
+@include mobile {
+  .breadcrumb-link,
+  .breadcrumb-text {
+    max-width: 120px;
+    @include text-truncate;
+  }
+}

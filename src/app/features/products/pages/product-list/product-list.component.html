@@ -1,0 +1,286 @@
+<div class="product-list-page">
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+      <div class="header-content">
+        <h1 class="page-title">{{ pageTitle }}</h1>
+        <p class="page-description" *ngIf="pageDescription">{{ pageDescription }}</p>
+      </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="filters-section">
+      <div class="filters-header">
+        <div class="results-info">
+          <span class="results-count" *ngIf="!loading">
+            {{ totalProducts }} {{ totalProducts === 1 ? 'product' : 'products' }} found
+          </span>
+        </div>
+        
+        <div class="filter-controls">
+          <div class="view-toggle">
+            <button 
+              class="view-btn" 
+              [class.active]="viewMode === 'grid'"
+              (click)="setViewMode('grid')"
+              title="Grid View"
+            >
+              ⊞
+            </button>
+            <button 
+              class="view-btn" 
+              [class.active]="viewMode === 'list'"
+              (click)="setViewMode('list')"
+              title="List View"
+            >
+              ☰
+            </button>
+          </div>
+
+          <select class="sort-select" [(ngModel)]="currentSort" (change)="onSortChange()">
+            <option value="newest">Newest First</option>
+            <option value="name">Name A-Z</option>
+            <option value="price_asc">Price: Low to High</option>
+            <option value="price_desc">Price: High to Low</option>
+            <option value="rating">Highest Rated</option>
+            <option value="popularity">Most Popular</option>
+          </select>
+
+          <button class="filter-toggle-btn mobile-only" (click)="toggleMobileFilters()">
+            Filters {{ mobileFiltersOpen ? '✕' : '☰' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters Panel -->
+      <div class="filters-panel" [class.mobile-open]="mobileFiltersOpen">
+        <div class="filters-content">
+          <!-- Category Filter -->
+          <div class="filter-group">
+            <h3 class="filter-title">Category</h3>
+            <div class="filter-options">
+              <label class="filter-option" *ngFor="let category of categories">
+                <input 
+                  type="checkbox" 
+                  [value]="category._id"
+                  [checked]="selectedCategories.includes(category._id)"
+                  (change)="onCategoryChange(category._id, $event)"
+                />
+                <span>{{ category.name }}</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Price Filter -->
+          <div class="filter-group">
+            <h3 class="filter-title">Price Range</h3>
+            <div class="price-range">
+              <input 
+                type="number" 
+                placeholder="Min" 
+                [(ngModel)]="priceRange.min"
+                (change)="onPriceChange()"
+                class="price-input"
+              />
+              <span class="price-separator">-</span>
+              <input 
+                type="number" 
+                placeholder="Max" 
+                [(ngModel)]="priceRange.max"
+                (change)="onPriceChange()"
+                class="price-input"
+              />
+            </div>
+          </div>
+
+          <!-- Size Filter -->
+          <div class="filter-group">
+            <h3 class="filter-title">Size</h3>
+            <div class="size-options">
+              <button 
+                *ngFor="let size of availableSizes"
+                class="size-btn"
+                [class.selected]="selectedSizes.includes(size)"
+                (click)="onSizeChange(size)"
+              >
+                {{ size }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Color Filter -->
+          <div class="filter-group">
+            <h3 class="filter-title">Color</h3>
+            <div class="color-options">
+              <button 
+                *ngFor="let color of availableColors"
+                class="color-btn"
+                [class.selected]="selectedColors.includes(color.name)"
+                [style.background-color]="color.code"
+                (click)="onColorChange(color.name)"
+                [title]="color.name"
+              ></button>
+            </div>
+          </div>
+
+          <!-- Clear Filters -->
+          <div class="filter-actions">
+            <app-button 
+              variant="outline" 
+              size="sm" 
+              (clicked)="clearFilters()"
+              [disabled]="!hasActiveFilters"
+            >
+              Clear All Filters
+            </app-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Grid/List -->
+    <div class="products-section">
+      <!-- Loading State -->
+      <div class="loading-grid" *ngIf="loading">
+        <app-loading type="skeleton" *ngFor="let item of [1,2,3,4,5,6,7,8]"></app-loading>
+      </div>
+
+      <!-- Products Grid -->
+      <div 
+        class="products-grid" 
+        [class.list-view]="viewMode === 'list'"
+        *ngIf="!loading && products.length > 0"
+      >
+        <div 
+          *ngFor="let product of products" 
+          class="product-item"
+          [routerLink]="['/products', product._id]"
+        >
+          <div class="product-image">
+            <img 
+              [src]="product.images[0]?.url || '/assets/images/product-placeholder.jpg'" 
+              [alt]="product.name"
+              loading="lazy"
+            />
+            <div class="product-badges">
+              <span class="badge sale" *ngIf="product.price.sale">
+                {{ getDiscountPercentage(product) }}% OFF
+              </span>
+              <span class="badge new" *ngIf="isNewProduct(product)">NEW</span>
+              <span class="badge featured" *ngIf="product.isFeatured">FEATURED</span>
+            </div>
+            <div class="product-actions">
+              <button class="action-btn wishlist-btn" (click)="toggleWishlist(product, $event)">
+                ♡
+              </button>
+              <button class="action-btn quick-view-btn" (click)="openQuickView(product, $event)">
+                👁
+              </button>
+            </div>
+          </div>
+
+          <div class="product-info">
+            <div class="product-brand" *ngIf="product.brand">{{ product.brand }}</div>
+            <h3 class="product-name">{{ product.name }}</h3>
+            
+            <div class="product-rating" *ngIf="product.ratings.count > 0">
+              <div class="rating-stars">
+                <span class="stars">{{ getStarRating(product.ratings.average) }}</span>
+                <span class="rating-count">({{ product.ratings.count }})</span>
+              </div>
+            </div>
+
+            <div class="product-price">
+              <span class="current-price">
+                {{ formatPrice(product.price.sale || product.price.regular) }}
+              </span>
+              <span class="original-price" *ngIf="product.price.sale">
+                {{ formatPrice(product.price.regular) }}
+              </span>
+            </div>
+
+            <div class="product-variants" *ngIf="viewMode === 'list'">
+              <div class="available-sizes">
+                <span class="variant-label">Sizes:</span>
+                <span class="variant-values">
+                  {{ product.variants.map(v => v.size).join(', ') }}
+                </span>
+              </div>
+              <div class="available-colors">
+                <span class="variant-label">Colors:</span>
+                <div class="color-swatches">
+                  <span 
+                    *ngFor="let variant of getUniqueColors(product.variants)"
+                    class="color-swatch"
+                    [style.background-color]="variant.color.code"
+                    [title]="variant.color.name"
+                  ></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="product-stock">
+              <span 
+                class="stock-status"
+                [class]="getStockStatusClass(product)"
+              >
+                {{ getStockStatusText(product) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="!loading && products.length === 0">
+        <div class="empty-icon">🔍</div>
+        <h3 class="empty-title">No Products Found</h3>
+        <p class="empty-message">
+          We couldn't find any products matching your criteria. 
+          Try adjusting your filters or search terms.
+        </p>
+        <app-button variant="outline" (clicked)="clearFilters()">
+          Clear All Filters
+        </app-button>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-section" *ngIf="!loading && products.length > 0 && totalPages > 1">
+        <div class="pagination">
+          <button 
+            class="page-btn"
+            [disabled]="currentPage === 1"
+            (click)="goToPage(currentPage - 1)"
+          >
+            ← Previous
+          </button>
+
+          <div class="page-numbers">
+            <button 
+              *ngFor="let page of getPageNumbers()"
+              class="page-btn"
+              [class.active]="page === currentPage"
+              (click)="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+          </div>
+
+          <button 
+            class="page-btn"
+            [disabled]="currentPage === totalPages"
+            (click)="goToPage(currentPage + 1)"
+          >
+            Next →
+          </button>
+        </div>
+
+        <div class="pagination-info">
+          Showing {{ (currentPage - 1) * pageSize + 1 }} - 
+          {{ Math.min(currentPage * pageSize, totalProducts) }} of {{ totalProducts }} products
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

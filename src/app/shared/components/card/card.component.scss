@@ -1,0 +1,202 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.card {
+  background: $bg-color;
+  border-radius: $border-radius-lg;
+  transition: all $transition-normal;
+  overflow: hidden;
+
+  &--default {
+    border: 1px solid $border-color;
+  }
+
+  &--outlined {
+    border: 2px solid $border-color;
+  }
+
+  &--elevated {
+    box-shadow: $shadow-md;
+    border: none;
+  }
+
+  &--filled {
+    background: $gray-50;
+    border: 1px solid $border-light;
+  }
+
+  &--padded {
+    .card-body {
+      padding: $spacing-lg;
+    }
+
+    .card-header {
+      padding: $spacing-lg $spacing-lg $spacing-md;
+    }
+
+    .card-footer {
+      padding: $spacing-md $spacing-lg $spacing-lg;
+    }
+  }
+
+  &--hoverable {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: $shadow-lg;
+    }
+  }
+
+  &--clickable {
+    cursor: pointer;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: $shadow-lg;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+.card-header {
+  border-bottom: 1px solid $border-color;
+  background: $gray-50;
+
+  h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 0;
+  }
+}
+
+.card-body {
+  flex: 1;
+  
+  &:not(.card--padded) {
+    padding: 0;
+  }
+}
+
+.card-footer {
+  border-top: 1px solid $border-color;
+  background: $gray-50;
+  
+  @include flex-between;
+  gap: $spacing-md;
+}
+
+// Special card types
+.card--product {
+  .card-body {
+    padding: $spacing-md;
+  }
+
+  .product-image {
+    @include aspect-ratio(1, 1);
+    margin-bottom: $spacing-md;
+    border-radius: $border-radius-md;
+    overflow: hidden;
+  }
+
+  .product-title {
+    font-weight: $font-weight-semibold;
+    margin-bottom: $spacing-xs;
+    @include text-clamp(2);
+  }
+
+  .product-price {
+    font-weight: $font-weight-bold;
+    color: $primary-color;
+    font-size: $font-size-lg;
+  }
+
+  .product-original-price {
+    text-decoration: line-through;
+    color: $text-muted;
+    font-size: $font-size-sm;
+    margin-left: $spacing-xs;
+  }
+}
+
+.card--user {
+  text-align: center;
+
+  .user-avatar {
+    width: 4rem;
+    height: 4rem;
+    border-radius: $border-radius-full;
+    margin: 0 auto $spacing-md;
+    background: $gray-200;
+    @include flex-center;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $text-muted;
+  }
+
+  .user-name {
+    font-weight: $font-weight-semibold;
+    margin-bottom: $spacing-xs;
+  }
+
+  .user-role {
+    color: $text-muted;
+    font-size: $font-size-sm;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.card--stat {
+  text-align: center;
+
+  .stat-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: $border-radius-full;
+    margin: 0 auto $spacing-md;
+    @include flex-center;
+    font-size: $font-size-xl;
+  }
+
+  .stat-value {
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-xs;
+  }
+
+  .stat-label {
+    color: $text-muted;
+    font-size: $font-size-sm;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .stat-change {
+    font-size: $font-size-sm;
+    margin-top: $spacing-xs;
+
+    &.positive {
+      color: $success-color;
+    }
+
+    &.negative {
+      color: $danger-color;
+    }
+  }
+}
+
+// Responsive adjustments
+@include mobile {
+  .card {
+    border-radius: $border-radius-md;
+  }
+
+  .card--padded {
+    .card-body,
+    .card-header,
+    .card-footer {
+      padding-left: $spacing-md;
+      padding-right: $spacing-md;
+    }
+  }
+}

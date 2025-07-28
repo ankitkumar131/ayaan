@@ -1,0 +1,170 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.input-wrapper {
+  width: 100%;
+  margin-bottom: $spacing-md;
+}
+
+.input-label {
+  display: block;
+  font-weight: $font-weight-medium;
+  margin-bottom: $spacing-xs;
+  color: $text-color;
+  font-size: $font-size-sm;
+
+  .required {
+    color: $danger-color;
+    margin-left: 2px;
+  }
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  &.has-icon {
+    .input {
+      padding-left: 2.5rem;
+    }
+  }
+}
+
+.input-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $text-muted;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.input {
+  @include input-base;
+  
+  &--sm {
+    padding: 0.5rem 0.75rem;
+    font-size: $font-size-sm;
+    min-height: 2rem;
+  }
+
+  &--md {
+    padding: 0.75rem 1rem;
+    font-size: $font-size-base;
+    min-height: 2.5rem;
+  }
+
+  &--lg {
+    padding: 1rem 1.25rem;
+    font-size: $font-size-lg;
+    min-height: 3rem;
+  }
+
+  &--error {
+    border-color: $danger-color;
+    
+    &:focus {
+      border-color: $danger-color;
+      box-shadow: 0 0 0 3px rgba($danger-color, 0.1);
+    }
+  }
+
+  &--disabled {
+    background-color: $gray-100;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  &--readonly {
+    background-color: $gray-50;
+    cursor: default;
+  }
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  // Remove default styling for number inputs
+  &[type="number"] {
+    -moz-appearance: textfield;
+    
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
+  // Remove default styling for search inputs
+  &[type="search"] {
+    -webkit-appearance: none;
+    
+    &::-webkit-search-decoration,
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-results-button,
+    &::-webkit-search-results-decoration {
+      -webkit-appearance: none;
+    }
+  }
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: $text-muted;
+  font-size: 1.2rem;
+  user-select: none;
+  transition: color $transition-normal;
+
+  &:hover {
+    color: $text-color;
+  }
+}
+
+.input-error {
+  margin-top: $spacing-xs;
+  font-size: $font-size-sm;
+  color: $danger-color;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  &::before {
+    content: '⚠️';
+    font-size: 0.875rem;
+  }
+}
+
+.input-hint {
+  margin-top: $spacing-xs;
+  font-size: $font-size-sm;
+  color: $text-muted;
+}
+
+// Focus states
+.input:focus {
+  outline: none;
+  border-color: $primary-color;
+  box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+}
+
+// Hover states
+.input:hover:not(:disabled):not(:focus) {
+  border-color: $border-dark;
+}
+
+// Animation for error state
+.input--error {
+  animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
