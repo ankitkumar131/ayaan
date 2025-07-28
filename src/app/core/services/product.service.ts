@@ -1,107 +1,251 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { BaseApiService } from './base-api.service';
 import { 
   Product, 
-  ProductsResponse, 
   ProductFilters, 
-  CreateProductRequest 
+  ProductCreateRequest,
+  Category 
 } from '../interfaces/product.interface';
-
-interface ColorData {
-  name: string;
-  code: string;
-}
+import { ApiResponse, PaginatedResponse } from '../interfaces/api-response.interface';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductService {
-  private readonly API_URL = 'http://localhost:3000/api/products';
+export class ProductService extends BaseApiService {
+  constructor(http: HttpClient) {
+    super(http);
+  }
+  private productsSubject = new BehaviorSubject<Product[]>([]);
+  private categoriesSubject = new BehaviorSubject<Category[]>([]);
+  private loadingSubject = new BehaviorSubject<boolean>(false);
 
-  constructor(private http: HttpClient) {}
+  public products$ = this.productsSubject.asObservable();
+  public categories$ = this.categoriesSubject.asObservable();
+  public loading$ = this.loadingSubject.asObservable();
 
-  getProducts(filters?: ProductFilters): Observable<ProductsResponse> {
-    let params = new HttpParams();
+  // Product Management
+  getProducts(filters?: ProductFilters): Observable<PaginatedResponse<Product>> {
+    this.loadingSubject.next(true);
+    const params = filters ? this.buildParams(filters) : undefined;
     
-    if (filters) {
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          params = params.set(key, value.toString());
-        }
-      });
-    }
-
-    return this.http.get<ProductsResponse>(this.API_URL, { params });
-  }
-
-  getProduct(id: string): Observable<Product> {
-    return this.http.get<Product>(`${this.API_URL}/${id}`);
-  }
-
-  createProduct(data: CreateProductRequest | FormData): Observable<Product> {
-    if (!(data instanceof FormData)) {
-      const formData = new FormData();
-      
-      Object.entries(data).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          if (key === 'images' && Array.isArray(value)) {
-            (value as File[]).forEach((file: File) => {
-              formData.append('images', file);
-            });
-          } else if (key === 'colors' && Array.isArray(value)) {
-            (value as ColorData[]).forEach((color, index) => {
-              formData.append(`colors[${index}][name]`, color.name);
-              formData.append(`colors[${index}][code]`, color.code);
-            });
-          } else if (key === 'sizes' && Array.isArray(value)) {
-            (value as string[]).forEach(size => {
-              formData.append('sizes[]', size);
-            });
-          } else {
-            formData.append(key, value.toString());
+    return this.getPaginated<Product>('/products', params)
+      .pipe(
+        map(response => {
+          this.loadingSubject.next(false);
+          if (response.success && response.data) {
+            this.productsSubject.next(response.data);
           }
-        }
-      });
-      
-      return this.http.post<Product>(this.API_URL, formData);
-    }
-    
-    return this.http.post<Product>(this.API_URL, data);
+          return response;
+        })
+      );
   }
 
-  updateProduct(id: string, data: Partial<CreateProductRequest> | FormData): Observable<Product> {
-    if (!(data instanceof FormData)) {
-      const formData = new FormData();
-      
-      Object.entries(data).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          if (key === 'images' && Array.isArray(value)) {
-            (value as File[]).forEach((file: File) => {
-              formData.append('images', file);
-            });
-          } else if (key === 'colors' && Array.isArray(value)) {
-            (value as ColorData[]).forEach((color, index) => {
-              formData.append(`colors[${index}][name]`, color.name);
-              formData.append(`colors[${index}][code]`, color.code);
-            });
-          } else if (key === 'sizes' && Array.isArray(value)) {
-            (value as string[]).forEach(size => {
-              formData.append('sizes[]', size);
-            });
-          } else {
-            formData.append(key, value.toString());
+  getProduct(id: string): Observable<ApiResponse<Product>> {
+    return this.get<Product>(`/products/${id}`);
+  }
+
+  // Alias methods for backward compatibility
+  getProductById(id: string): Observable<ApiResponse<Product>> {
+    return this.getProduct(id);
+  }
+
+  getAllProducts(): Observable<ApiResponse<Product[]>> {
+    return this.get<Product[]>('/products/all');
+  }
+
+  getAllCategories(): Observable<ApiResponse<Category[]>> {
+    return this.getCategories();
+  }
+
+  getProductBySlug(slug: string): Observable<ApiResponse<Product>> {
+    return this.get<Product>(`/products/slug/${slug}`);
+  }
+
+  getFeaturedProducts(limit: number = 8): Observable<ApiResponse<Product[]>> {
+    const params = this.buildParams({ limit });
+    return this.get<Product[]>('/products/featured', params);
+  }
+
+  getOnSaleProducts(limit: number = 8): Observable<ApiResponse<Product[]>> {
+    const params = this.buildParams({ limit });
+    return this.get<Product[]>('/products/on-sale', params);
+  }
+
+  searchProducts(query: string, filters?: ProductFilters): Observable<PaginatedResponse<Product>> {
+    this.loadingSubject.next(true);
+    const searchFilters = { ...filters, search: query };
+    const params = this.buildParams(searchFilters);
+    
+    return this.getPaginated<Product>('/products/search', params)
+      .pipe(
+        map(response => {
+          this.loadingSubject.next(false);
+          return response;
+        })
+      );
+  }
+
+  getRelatedProducts(productId: string, limit: number = 4): Observable<ApiResponse<Product[]>> {
+    const params = this.buildParams({ limit });
+    return this.get<Product[]>(`/products/${productId}/related`, params);
+  }
+
+  // Admin Product Management
+  createProduct(productData: ProductCreateRequest, images?: File[]): Observable<ApiResponse<Product>> {
+    const formData = new FormData();
+    
+    // Append each field directly instead of wrapping in productData
+    Object.keys(productData).forEach(key => {
+      if (productData[key as keyof ProductCreateRequest] !== null && productData[key as keyof ProductCreateRequest] !== undefined) {
+        const value = productData[key as keyof ProductCreateRequest];
+        if (typeof value === 'object') {
+          formData.append(key, JSON.stringify(value));
+        } else {
+          formData.append(key, String(value));
+        }
+      }
+    });
+    
+    if (images && images.length > 0) {
+      images.forEach((image, index) => {
+        formData.append(`images`, image);
+      });
+    }
+    
+    return this.post<Product>('/products', formData);
+  }
+
+  updateProduct(id: string, productData: Partial<ProductCreateRequest>, images?: File[]): Observable<ApiResponse<Product>> {
+    const formData = new FormData();
+    formData.append('productData', JSON.stringify(productData));
+    
+    if (images && images.length > 0) {
+      images.forEach((image, index) => {
+        formData.append(`images`, image);
+      });
+    }
+    
+    return this.put<Product>(`/products/${id}`, formData);
+  }
+
+  deleteProduct(id: string): Observable<ApiResponse<any>> {
+    return this.delete(`/products/${id}`);
+  }
+
+  // Category Management
+  getCategories(): Observable<ApiResponse<Category[]>> {
+    return this.get<Category[]>('/categories')
+      .pipe(
+        map(response => {
+          if (response.success && response.data) {
+            this.categoriesSubject.next(response.data);
           }
-        }
-      });
-      
-      return this.http.put<Product>(`${this.API_URL}/${id}`, formData);
-    }
-    
-    return this.http.put<Product>(`${this.API_URL}/${id}`, data);
+          return response;
+        })
+      );
   }
 
-  deleteProduct(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.API_URL}/${id}`);
+  getCategory(id: string): Observable<ApiResponse<Category>> {
+    return this.get<Category>(`/categories/${id}`);
+  }
+
+  getCategoryBySlug(slug: string): Observable<ApiResponse<Category>> {
+    return this.get<Category>(`/categories/slug/${slug}`);
+  }
+
+  getMainCategories(): Observable<ApiResponse<Category[]>> {
+    return this.get<Category[]>('/categories/main');
+  }
+
+  getFeaturedCategories(): Observable<ApiResponse<Category[]>> {
+    return this.get<Category[]>('/categories/featured');
+  }
+
+  getCategoriesByGender(gender: 'men' | 'women'): Observable<ApiResponse<Category[]>> {
+    return this.get<Category[]>(`/categories/gender/${gender}`);
+  }
+
+  getProductsByCategory(categoryId: string, filters?: ProductFilters): Observable<PaginatedResponse<Product>> {
+    const params = filters ? this.buildParams(filters) : undefined;
+    return this.getPaginated<Product>(`/categories/${categoryId}/products`, params);
+  }
+
+  // Admin Category Management
+  createCategory(categoryData: any, image?: File): Observable<ApiResponse<Category>> {
+    const formData = new FormData();
+    
+    // Append each field directly instead of wrapping in categoryData
+    Object.keys(categoryData).forEach(key => {
+      if (categoryData[key] !== null && categoryData[key] !== undefined) {
+        formData.append(key, categoryData[key]);
+      }
+    });
+    
+    if (image) {
+      formData.append('image', image);
+    }
+    
+    return this.post<Category>('/categories', formData);
+  }
+
+  updateCategory(id: string, categoryData: any, image?: File): Observable<ApiResponse<Category>> {
+    const formData = new FormData();
+    formData.append('categoryData', JSON.stringify(categoryData));
+    
+    if (image) {
+      formData.append('image', image);
+    }
+    
+    return this.put<Category>(`/categories/${id}`, formData);
+  }
+
+  deleteCategory(id: string): Observable<ApiResponse<any>> {
+    return this.delete(`/categories/${id}`);
+  }
+
+  // Utility Methods
+  getCurrentProducts(): Product[] {
+    return this.productsSubject.value;
+  }
+
+  getCurrentCategories(): Category[] {
+    return this.categoriesSubject.value;
+  }
+
+  isLoading(): boolean {
+    return this.loadingSubject.value;
+  }
+
+  // Price Formatting
+  formatPrice(price: number, currency: string = 'USD'): string {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency
+    }).format(price);
+  }
+
+  // Discount Calculation
+  calculateDiscount(regularPrice: number, salePrice: number): number {
+    if (!salePrice || salePrice >= regularPrice) return 0;
+    return Math.round(((regularPrice - salePrice) / regularPrice) * 100);
+  }
+
+  // Stock Status
+  getStockStatus(product: Product, selectedVariant?: any): 'in-stock' | 'low-stock' | 'out-of-stock' {
+    let stock = product.inventory.stock;
+    
+    if (selectedVariant) {
+      const variant = product.variants.find(v => 
+        v.size === selectedVariant.size && v.color.name === selectedVariant.color
+      );
+      stock = variant?.stock || 0;
+    }
+    
+    if (stock === 0) return 'out-of-stock';
+    if (stock <= product.inventory.lowStockThreshold) return 'low-stock';
+    return 'in-stock';
   }
 }

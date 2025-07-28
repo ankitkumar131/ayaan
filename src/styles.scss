@@ -1,4 +1,198 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global Styles for E-Commerce Application */
+
+// Import Google Fonts
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+// Import variables and mixins
+@import 'app/styles/variables';
+@import 'app/styles/mixins';
+
+// Reset and base styles
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: $font-family-sans;
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+  color: $text-color;
+  background-color: $bg-light;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Typography
+h1, h2, h3, h4, h5, h6 {
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  margin-bottom: $spacing-md;
+}
+
+h1 { font-size: $font-size-4xl; }
+h2 { font-size: $font-size-3xl; }
+h3 { font-size: $font-size-2xl; }
+h4 { font-size: $font-size-xl; }
+h5 { font-size: $font-size-lg; }
+h6 { font-size: $font-size-base; }
+
+p {
+  margin-bottom: $spacing-md;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+a {
+  color: $primary-color;
+  text-decoration: none;
+  transition: color $transition-normal;
+  
+  &:hover {
+    color: $primary-dark;
+    text-decoration: underline;
+  }
+}
+
+// Lists
+ul, ol {
+  margin-bottom: $spacing-md;
+  padding-left: $spacing-lg;
+}
+
+li {
+  margin-bottom: $spacing-xs;
+}
+
+// Images
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+// Forms
+input, textarea, select {
+  @include input-base;
+}
+
+label {
+  display: block;
+  font-weight: $font-weight-medium;
+  margin-bottom: $spacing-xs;
+  color: $text-color;
+}
+
+// Buttons
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+// Utility classes
+@include generate-spacing-utilities;
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+  
+  @include desktop {
+    padding: 0 $spacing-lg;
+  }
+}
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.text-primary { color: $primary-color; }
+.text-secondary { color: $secondary-color; }
+.text-success { color: $success-color; }
+.text-warning { color: $warning-color; }
+.text-danger { color: $danger-color; }
+.text-muted { color: $text-muted; }
+
+.bg-primary { background-color: $primary-color; }
+.bg-secondary { background-color: $secondary-color; }
+.bg-light { background-color: $bg-light; }
+.bg-white { background-color: $bg-color; }
+
+.d-none { display: none; }
+.d-block { display: block; }
+.d-flex { display: flex; }
+.d-grid { display: grid; }
+
+.flex-center { @include flex-center; }
+.flex-between { @include flex-between; }
+.flex-column { @include flex-column; }
+
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+
+.rounded { border-radius: $border-radius-md; }
+.rounded-lg { border-radius: $border-radius-lg; }
+.rounded-full { border-radius: $border-radius-full; }
+
+.shadow { box-shadow: $shadow-md; }
+.shadow-lg { box-shadow: $shadow-lg; }
+
+// Loading states
+.loading {
+  @include spinner;
+}
+
+// Animations
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.slide-in-up {
+  animation: slideInUp 0.3s ease-out;
+}
+
+.slide-in-down {
+  animation: slideInDown 0.3s ease-out;
+}
+
+// Responsive utilities
+.mobile-only {
+  @include tablet {
+    display: none !important;
+  }
+}
+
+.desktop-only {
+  @include mobile {
+    display: none !important;
+  }
+}
+
+// Custom scrollbar
+* {
+  @include custom-scrollbar;
+}
+
+// Focus styles
+*:focus {
+  outline: 2px solid $primary-color;
+  outline-offset: 2px;
+}
+
+// Selection styles
+::selection {
+  background-color: rgba($primary-color, 0.2);
+  color: $text-color;
+}
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 /* Reset */

@@ -1,0 +1,109 @@
+<div class="auth-page">
+  <div class="container">
+    <div class="auth-container">
+      <app-card customClass="auth-card">
+        <div slot="header" class="auth-header">
+          <h1 class="auth-title">Create Account</h1>
+          <p class="auth-subtitle">Join us and start your shopping journey</p>
+        </div>
+
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+          <div class="form-row">
+            <app-input
+              label="First Name"
+              type="text"
+              placeholder="Enter your first name"
+              formControlName="firstName"
+              [error]="getFieldError('firstName')"
+              [required]="true"
+            ></app-input>
+
+            <app-input
+              label="Last Name"
+              type="text"
+              placeholder="Enter your last name"
+              formControlName="lastName"
+              [error]="getFieldError('lastName')"
+              [required]="true"
+            ></app-input>
+          </div>
+
+          <app-input
+            label="Username"
+            type="text"
+            placeholder="Choose a username"
+            formControlName="username"
+            [error]="getFieldError('username')"
+            [required]="true"
+          ></app-input>
+
+          <app-input
+            label="Email Address"
+            type="email"
+            placeholder="Enter your email"
+            formControlName="email"
+            [error]="getFieldError('email')"
+            [required]="true"
+          ></app-input>
+
+          <app-input
+            label="Phone Number"
+            type="tel"
+            placeholder="Enter your phone number"
+            formControlName="phone"
+            [error]="getFieldError('phone')"
+          ></app-input>
+
+          <app-input
+            label="Password"
+            type="password"
+            placeholder="Create a password"
+            formControlName="password"
+            [error]="getFieldError('password')"
+            [showPasswordToggle]="true"
+            [required]="true"
+          ></app-input>
+
+          <app-input
+            label="Confirm Password"
+            type="password"
+            placeholder="Confirm your password"
+            formControlName="confirmPassword"
+            [error]="getFieldError('confirmPassword')"
+            [showPasswordToggle]="true"
+            [required]="true"
+          ></app-input>
+
+          <div class="form-options">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="agreeToTerms" />
+              <span>I agree to the <a routerLink="/legal/terms" target="_blank">Terms of Service</a> and <a routerLink="/legal/privacy" target="_blank">Privacy Policy</a></span>
+            </label>
+          </div>
+
+          <div class="form-error" *ngIf="errorMessage">
+            {{ errorMessage }}
+          </div>
+
+          <app-button
+            type="submit"
+            variant="primary"
+            size="lg"
+            [fullWidth]="true"
+            [loading]="isLoading"
+            [disabled]="registerForm.invalid"
+          >
+            Create Account
+          </app-button>
+        </form>
+
+        <div slot="footer" class="auth-footer">
+          <p class="auth-switch">
+            Already have an account?
+            <a routerLink="/auth/login" class="auth-link">Sign in</a>
+          </p>
+        </div>
+      </app-card>
+    </div>
+  </div>
+</div>

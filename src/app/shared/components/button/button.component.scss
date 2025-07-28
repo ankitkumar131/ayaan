@@ -1,0 +1,130 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+  border-radius: $border-radius-md;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  overflow: hidden;
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+
+  &:disabled,
+  &--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  &--loading {
+    cursor: wait;
+    
+    .btn-spinner {
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid transparent;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  &--full-width {
+    width: 100%;
+  }
+
+  // Variants
+  &--primary {
+    background-color: $primary-color;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: darken($primary-color, 10%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &--secondary {
+    background-color: $secondary-color;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: darken($secondary-color, 10%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba($secondary-color, 0.3);
+    }
+  }
+
+  &--outline {
+    background-color: transparent;
+    color: $primary-color;
+    border: 2px solid $primary-color;
+
+    &:hover:not(:disabled) {
+      background-color: $primary-color;
+      color: white;
+      transform: translateY(-1px);
+    }
+  }
+
+  &--ghost {
+    background-color: transparent;
+    color: $text-color;
+
+    &:hover:not(:disabled) {
+      background-color: $gray-100;
+      transform: translateY(-1px);
+    }
+  }
+
+  &--danger {
+    background-color: $danger-color;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: darken($danger-color, 10%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba($danger-color, 0.3);
+    }
+  }
+
+  // Sizes
+  &--sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    min-height: 2rem;
+  }
+
+  &--md {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    min-height: 2.5rem;
+  }
+
+  &--lg {
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+    min-height: 3rem;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-
-import { LayoutComponent } from './features/shared/layout/layout.component';
+import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, LayoutComponent],
-  templateUrl: './app.component.html',
+  imports: [MainLayoutComponent],
+  template: `
+    <app-main-layout></app-main-layout>
+  `,
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'StyleStore';
+  title = 'StyleHub - E-Commerce Store';
 }
